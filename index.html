@@ -74,8 +74,6 @@ footer{margin-top:16px;font-size:11px;color:var(--grey);line-height:1.5;}
     <div class="chips" id="schnell"></div>
   </section>
   <section><h2>Extras (pro Tag)</h2>
-    <div class="opt"><span class="name">Schutz</span><div class="chips" id="vers"></div></div>
-    <div class="opt"><span class="name">Jungfahrer</span><div class="chips" id="jf"></div></div>
     <div class="opt"><span class="name">Zusatzfahrer</span><div class="chips" id="zf"></div></div>
     <div class="opt"><span class="name">Extra-km</span><div class="chips" id="km"></div></div>
     <div class="rabatt"><span class="name" style="font-size:13px;font-weight:600;width:86px;">Rabatt</span>
@@ -98,17 +96,17 @@ footer{margin-top:16px;font-size:11px;color:var(--grey);line-height:1.5;}
   </footer>
 </main>
 <script>
-const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1, 1, 1, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "versL": ["Kein Schutz", "Smart-Schutz", "Komfort-Schutz", "Exklusiv-Schutz"], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmL": ["Nein", "+50 km", "+100 km", "+150 km", "+200 km", "+300 km"], "cars": [{"n": "Audi RS Q 8", "gp": 349.23, "kaution": 0, "v": [0, 24.99, 43.99, 81.49], "j": [0, 25], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.35, "kaution": 0, "v": [0, 19.99, 34.99, 64.99], "j": [0, 20], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3", "gp": 199.82, "kaution": 0, "v": [0, 19.99, 26.49, 48.99], "j": [0, 20], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.15, "kaution": 0, "v": [0, 14.99, 26.49, 48.99], "j": [0, 15], "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.08, "kaution": 0, "v": [0, 24.99, 43.99, 81.49], "j": [0, 25], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 AMG", "gp": 269.23, "kaution": 0, "v": [0, 19.99, 34.99, 64.99], "j": [0, 20], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 AMG", "gp": 289.31, "kaution": 0, "v": [0, 19.99, 34.99, 64.99], "j": [0, 20], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8", "gp": 449.0, "kaution": 0, "v": [0, 34.99, 59.99, 109.99], "j": [0, 35], "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 169.0, "kaution": 0, "v": [0, 16.99, 24.99, 44.99], "j": [0, 15], "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 89.0, "kaution": 0, "v": [0, 12.99, 19.99, 34.99], "j": [0, 10], "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
-const st={car:0,day:0,dauer:3,vers:0,jf:0,zf:0,km:0,rab:0};
+const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1, 1, 1, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmL": ["Nein", "+50 km", "+100 km", "+150 km", "+200 km", "+300 km"], "cars": [{"n": "Audi RS Q 8", "gp": 349.23, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.35, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3", "gp": 199.82, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.15, "kaution": 0, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.08, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 AMG", "gp": 269.23, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 AMG", "gp": 289.31, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8", "gp": 449.0, "kaution": 0, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 0, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 0, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
+const st={car:0,day:0,dauer:3,zf:0,km:0,rab:0};
 let textAngefasst=false;
 const EUR=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"});
 function scaler(s,d){const W=D.faktor.reduce((a,b)=>a+b,0);let sum=Math.floor(d/7)*W;for(let k=0;k<d%7;k++)sum+=D.faktor[(s+k)%7];return sum;}
-function calc(car,day,dauer,vers,jf,zf,km,rab){
+function calc(car,day,dauer,zf,km,rab){
   const c=D.cars[car];
   if(dauer<D.mind[day])return{ok:false,mind:D.mind[day]};
   const pf=1-D.rabatt[Math.min(dauer,D.days)-1];
   const gm=c.gp*scaler(day,dauer);
-  const zus=c.v[vers]+c.j[jf]+c.zf[zf]+c.km[km];
+  const zus=c.zf[zf]+c.km[km];
   const total=(1-rab/100)*gm*pf+dauer*zus;
   return{ok:true,gm:gm,pf:pf,zus:zus,total:total,proTag:total/dauer};
 }
@@ -123,8 +121,6 @@ function nummer(roh){
 function angebot(r){
   const c=D.cars[st.car],name=(kname.value||"").trim();
   const extras=[];
-  if(c.v[st.vers])extras.push(D.versL[st.vers]);
-  if(c.j[st.jf])extras.push("Jungfahrer-Freigabe");
   if(c.zf[st.zf])extras.push(D.zfL[st.zf]+" Zusatzfahrer");
   if(c.km[st.km])extras.push(D.kmL[st.km]+" Extra-Kilometer pro Tag");
   const z=[];
@@ -158,10 +154,10 @@ function chips(el,labels,key,small,six){
 }
 function mark(el,idx){[...el.children].forEach((c,i)=>c.classList.toggle("on",i===idx));}
 function render(){
-  mark(autos,st.car);mark(tage,st.day);mark(vers,st.vers);mark(jf,st.jf);mark(zf,st.zf);mark(km,st.km);
+  mark(autos,st.car);mark(tage,st.day);mark(zf,st.zf);mark(km,st.km);
   [...schnell.children].forEach(c=>c.classList.toggle("on",+c.dataset.d===st.dauer));
   if(document.activeElement!==dauerEl)dauerEl.value=st.dauer;
-  const r=calc(st.car,st.day,st.dauer,st.vers,st.jf,st.zf,st.km,st.rab);
+  const r=calc(st.car,st.day,st.dauer,st.zf,st.km,st.rab);
   if(!r.ok){
     total.textContent="-";protag.textContent="";dauerinfo.textContent="";
     warn.style.display="block";
@@ -176,8 +172,6 @@ function render(){
   z.push(["Grundmiete (Tagespreise)",EUR.format(r.gm),""]);
   if(r.pf<1)z.push(["Mengenrabatt ("+Math.round((1-r.pf)*100)+" %)","-"+EUR.format(r.gm*(1-r.pf)),"minus"]);
   if(st.rab>0)z.push(["Extra-Rabatt ("+st.rab+" %)","-"+EUR.format(r.gm*r.pf*st.rab/100),"minus"]);
-  if(c.v[st.vers])z.push([D.versL[st.vers],EUR.format(st.dauer*c.v[st.vers]),""]);
-  if(c.j[st.jf])z.push(["Jungfahrer",EUR.format(st.dauer*c.j[st.jf]),""]);
   if(c.zf[st.zf])z.push([D.zfL[st.zf]+" Zusatzfahrer",EUR.format(st.dauer*c.zf[st.zf]),""]);
   if(c.km[st.km])z.push([D.kmL[st.km]+" Extra-km pro Tag",EUR.format(st.dauer*c.km[st.km]),""]);
   z.push(["Gesamt",EUR.format(r.total),""]);
@@ -191,7 +185,6 @@ function render(){
 }
 function setDauer(v){st.dauer=Math.max(1,Math.min(D.qamax,Math.round(v)||1));render();}
 const autos=document.getElementById("autos"),tage=document.getElementById("tage"),
-  vers=document.getElementById("vers"),jf=document.getElementById("jf"),
   zf=document.getElementById("zf"),km=document.getElementById("km"),
   schnell=document.getElementById("schnell"),dauerEl=document.getElementById("dauer"),
   total=document.getElementById("total"),protag=document.getElementById("protag"),
@@ -201,8 +194,6 @@ const autos=document.getElementById("autos"),tage=document.getElementById("tage"
   nrinfo=document.getElementById("nrinfo"),wa=document.getElementById("wa");
 chips(autos,D.cars.map(c=>c.n),"car");
 chips(tage,D.weekdays.map(w=>w.slice(0,2)),"day",true);
-chips(vers,["Kein","Smart","Komfort","Exklusiv"],"vers",true);
-chips(jf,["Nein","Ja"],"jf",true);
 chips(zf,D.zfL,"zf",true,true);
 chips(km,D.kmL,"km",true,true);
 [2,3,7,14,30].forEach(d=>{
