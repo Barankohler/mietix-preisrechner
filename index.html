@@ -56,15 +56,6 @@ input[type=date]{width:100%;background:#fff;border:none;border-radius:16px;
 input[type=date]:focus{outline:2px solid var(--dark);outline-offset:-2px;}
 #datumtext{font-size:12px;color:var(--grey);margin:8px 0 0 3px;font-weight:600;}
 
-.stepper{display:flex;gap:9px;align-items:center;}
-.stepper button{width:60px;height:58px;font-size:27px;font-weight:700;border:none;
-  border-radius:16px;background:#fff;color:var(--dark);cursor:pointer;font-family:inherit;
-  box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
-.stepper button:active{background:#EDEDEF;transform:scale(.95);}
-.stepper input{flex:1;height:58px;text-align:center;font-size:21px;font-weight:800;
-  border:none;border-radius:16px;background:#fff;color:var(--dark);font-family:inherit;
-  box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
-
 details.extras{background:#fff;border-radius:16px;overflow:hidden;
   box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
 details.extras summary{padding:17px;font-size:16px;font-weight:800;cursor:pointer;
@@ -155,18 +146,14 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
   </div>
 
   <div class="block">
-    <p class="feldname">Startdatum</p>
+    <p class="feldname">Abholung</p>
     <input type="date" id="datum" min="2026-01-01" max="2027-12-31">
-    <p id="datumtext"></p>
   </div>
 
   <div class="block">
-    <p class="feldname">Mietdauer in Tagen</p>
-    <div class="stepper">
-      <button id="minus" type="button">-</button>
-      <input id="dauer" type="number" inputmode="numeric" min="1" max="365" value="3">
-      <button id="plus" type="button">+</button>
-    </div>
+    <p class="feldname">Rückgabe</p>
+    <input type="date" id="bis" min="2026-01-02" max="2028-12-31">
+    <p id="datumtext"></p>
     <div id="warn"></div>
   </div>
 
@@ -227,7 +214,7 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
 
 <script>
 const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1.0, 1.0, 1.0, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0.0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmStufen": [50, 100, 150, 200, 300], "freiKm": 150, "cars": [{"n": "Audi RS Q8", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3", "gp": 199.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 AMG", "gp": 269.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 AMG", "gp": 289.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8", "gp": 399.0, "kaution": 1950, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 1000, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
-const st={car:0,datum:null,dauer:3,zf:0,km:0,rab:0};   // km = Kilometer pro Tag, frei
+const st={car:0,datum:null,bis:null,dauer:3,zf:0,km:0,rab:0};   // dauer folgt aus den beiden Datumsfeldern
 let textAngefasst=false;
 const EUR=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"});
 const EUR0=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0});
@@ -241,6 +228,7 @@ function kurz(d){return String(d.getDate()).padStart(2,"0")+"."+String(d.getMont
 function lang(d){return kurz(d)+d.getFullYear();}
 function wtKurz(d){return ["Mo","Di","Mi","Do","Fr","Sa","So"][wtIndex(d)];}
 function plusTage(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function tageZwischen(von,bis){return Math.round((bis-von)/86400000);}
 
 /* ---------- Rechnen ---------- */
 function scaler(s,d){const W=D.faktor.reduce((a,b)=>a+b,0);let sum=Math.floor(d/7)*W;
@@ -280,17 +268,17 @@ window.mxCalc=calc;window.mxNummer=nummer;window.mxWtIndex=wtIndex;window.mxKmPr
 
 /* ---------- Angebotstext ---------- */
 function angebot(r){
-  const c=D.cars[st.car],von=st.datum,bis=plusTage(von,st.dauer);
+  const c=D.cars[st.car],von=st.datum,bis=st.bis;
   const kmGesamt = D.freiKm*st.dauer + st.km;
-  const kmTxt = kmGesamt.toLocaleString("de-DE")+" km";
   const zfTxt = c.zf[st.zf] ? D.zfL[st.zf] : "keine";
   const z=[];
-  z.push(c.n);
-  z.push(wtKurz(von)+" "+kurz(von)+" bis "+wtKurz(bis)+" "+lang(bis)+", "+st.dauer+(st.dauer===1?" Tag":" Tage"));
+  z.push("Fahrzeug: "+c.n);
+  z.push("Zeitraum: "+wtKurz(von)+" "+kurz(von)+" bis "+wtKurz(bis)+" "+lang(bis)
+         +", "+st.dauer+(st.dauer===1?" Tag":" Tage"));
   z.push("");
-  z.push("Gesamtpreis "+EUR.format(r.total));
+  z.push("Mietpreis: "+EUR.format(r.total));
   z.push("");
-  z.push("Kilometer: "+kmTxt);
+  z.push("Kilometer: "+kmGesamt.toLocaleString("de-DE")+" km");
   z.push("Zusatzfahrer: "+zfTxt);
   z.push("Kaution: "+(c.kaution?EUR0.format(c.kaution)+", kommt nach Rückgabe komplett zurück":"auf Anfrage"));
   z.push("");
@@ -334,10 +322,13 @@ function render(){
     +(c.kaution?EUR0.format(c.kaution):"auf Anfrage");
   mark($("zf"),st.zf);
   if(document.activeElement!==$("km"))$("km").value=st.km;
-  if(document.activeElement!==$("dauer"))$("dauer").value=st.dauer;
 
-  const von=st.datum,tag=wtIndex(von),bis=plusTage(von,st.dauer);
-  $("datumtext").textContent=D.weekdays[tag]+", "+lang(von)+"  bis  "+wtKurz(bis)+" "+lang(bis);
+  const von=st.datum,bis=st.bis,tag=wtIndex(von);
+  $("datum").value=nachISO(von);          // Datumsfelder immer angleichen, sonst
+  $("bis").value=nachISO(bis);            // bleibt ein fokussiertes Feld stehen
+  $("bis").min=nachISO(plusTage(von,1));
+  $("datumtext").textContent=D.weekdays[tag]+", "+lang(von)+" bis "+D.weekdays[wtIndex(bis)]
+    +", "+lang(bis)+"   ("+st.dauer+(st.dauer===1?" Tag":" Tage")+")";
 
   const r=calc(st.car,tag,st.dauer,st.zf,st.km,st.rab);
 
@@ -388,27 +379,33 @@ function render(){
   $("senden").textContent = nr ? "Per WhatsApp senden" : "Angebot teilen";
   $("senden").classList.remove("aus");$("kopieren").classList.remove("aus");
 }
-function setDauer(v){st.dauer=Math.max(1,Math.min(D.qamax,Math.round(v)||1));textAngefasst=false;render();}
+function setDauer(v){st.dauer=Math.max(1,Math.min(D.qamax,Math.round(v)||1));
+  st.bis=plusTage(st.datum,st.dauer);textAngefasst=false;render();}
 
 /* ---------- Start ---------- */
 chips($("zf"),D.zfL,"zf");
 $("km").addEventListener("input",e=>{
   st.km=Math.max(0,Math.min(20000,Math.round(+e.target.value)||0));textAngefasst=false;render();});
 $("km").addEventListener("blur",()=>{$("km").value=st.km;});
-const heute=new Date(), min=ausISO("2026-01-01"), max=ausISO("2027-12-31");
-st.datum = heute<min?min : heute>max?min : heute;
-$("datum").value=nachISO(st.datum);
+const heute=new Date(), minD=ausISO("2026-01-01"), maxD=ausISO("2027-12-31");
+st.datum = (heute<minD||heute>maxD) ? minD : new Date(heute.getFullYear(),heute.getMonth(),heute.getDate());
+st.bis = plusTage(st.datum,st.dauer);
 $("datum").addEventListener("change",e=>{
   if(!e.target.value)return;
-  st.datum=ausISO(e.target.value);textAngefasst=false;render();
+  st.datum=ausISO(e.target.value);
+  st.bis=plusTage(st.datum,st.dauer);      // Mietdauer beibehalten, Rueckgabe mitziehen
+  textAngefasst=false;render();
+});
+$("bis").addEventListener("change",e=>{
+  if(!e.target.value)return;
+  let neu=ausISO(e.target.value);
+  if(tageZwischen(st.datum,neu)<1)neu=plusTage(st.datum,1);
+  st.bis=neu;st.dauer=Math.min(D.qamax,tageZwischen(st.datum,st.bis));
+  textAngefasst=false;render();
 });
 $("autoknopf").onclick=aufSheet;
 $("zu").onclick=zuSheet;
 $("sheetbg").onclick=e=>{if(e.target.id==="sheetbg")zuSheet();};
-$("minus").onclick=()=>setDauer(st.dauer-1);
-$("plus").onclick=()=>setDauer(st.dauer+1);
-$("dauer").addEventListener("input",()=>{if($("dauer").value!=="")setDauer(+$("dauer").value);});
-$("dauer").addEventListener("blur",()=>{$("dauer").value=st.dauer;});
 $("rab").addEventListener("input",e=>{st.rab=Math.max(0,Math.min(100,+e.target.value||0));textAngefasst=false;render();});
 $("knr").addEventListener("input",render);
 
