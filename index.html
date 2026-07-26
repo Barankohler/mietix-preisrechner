@@ -9,98 +9,234 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Mietix Preisrechner</title>
 <style>
-:root{--red:#C4161C;--dark:#2E2E30;--grey:#6F6F72;--line:#D9D9DB;--bg:#F4F4F5;--wa:#25D366;}
+:root{--red:#C4161C;--dark:#2E2E30;--grey:#6F6F72;--line:#E2E2E4;--bg:#F2F2F4;--wa:#25D366;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--dark);padding-bottom:30px;-webkit-text-size-adjust:100%;}
-header{background:var(--dark);color:#fff;padding:calc(9px + env(safe-area-inset-top)) 16px 9px;border-bottom:3px solid var(--red);}
-header h1{font-size:16px;letter-spacing:.4px;}header h1 span{color:var(--red);}
-#result{position:sticky;top:0;z-index:9;background:#fff;border-bottom:1px solid var(--line);padding:9px 16px;box-shadow:0 2px 10px rgba(0,0,0,.08);}
-#result .row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
-#result .lbl{font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;}
-#total{font-size:30px;font-weight:800;color:var(--red);line-height:1.1;}
-#protag{font-size:14px;font-weight:700;}
-#warn{display:none;font-size:13px;font-weight:700;color:var(--red);margin-top:3px;}
-main{padding:12px 16px;}
-section{margin-bottom:14px;}
-h2{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--grey);margin-bottom:6px;}
-.chips{display:flex;flex-wrap:wrap;gap:6px;}
-.chips.grid2{display:grid;grid-template-columns:1fr 1fr;}
-.chips.six{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;}
-.chips.six .chip{min-width:0;padding:9px 0;}
-.chip{border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 10px;font-size:15px;font-weight:600;text-align:center;color:var(--dark);cursor:pointer;user-select:none;}
-.chip.small{padding:9px 0;font-size:13px;flex:1 1 0;min-width:40px;}
-.chip.on{background:var(--red);border-color:var(--red);color:#fff;}
-.stepper{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
-.stepper button{width:52px;height:46px;font-size:24px;font-weight:700;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--dark);cursor:pointer;}
-.stepper input{flex:1;height:46px;text-align:center;font-size:18px;font-weight:700;border:2px solid var(--dark);border-radius:10px;background:#fff;color:var(--dark);}
-.stepper .einheit{font-size:14px;color:var(--grey);width:42px;}
-.opt{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;}
-.opt .name{font-size:13px;font-weight:600;width:86px;flex:none;}
-.opt .chips{flex:1;}
-.feld{width:100%;height:46px;font-size:16px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 12px;color:var(--dark);margin-bottom:8px;}
-.feld:focus{outline:none;border-color:var(--dark);}
-.rabatt{display:flex;align-items:center;gap:8px;}
-.rabatt input{width:84px;height:46px;text-align:center;font-size:16px;font-weight:700;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--dark);}
-.karte{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;}
-details.karte summary{font-size:13px;font-weight:700;cursor:pointer;}
-#teile{margin-top:8px;font-size:13px;}
-#teile div{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px dashed var(--line);}
-#teile div:last-child{border-bottom:none;font-weight:800;}
-#teile .minus{color:var(--red);}
-#vorschau{width:100%;min-height:132px;font-size:13px;line-height:1.5;border:1px solid var(--line);border-radius:10px;padding:10px;font-family:inherit;color:var(--dark);background:#fff;resize:vertical;}
-#wa{display:block;width:100%;margin-top:10px;background:var(--wa);color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;text-align:center;text-decoration:none;}
-#wa.aus{background:#c8c8cb;pointer-events:none;}
-#nrinfo{font-size:11px;color:var(--grey);margin-bottom:8px;}
-footer{margin-top:16px;font-size:11px;color:var(--grey);line-height:1.5;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+     background:var(--bg);color:var(--dark);-webkit-text-size-adjust:100%;padding-bottom:34px;}
+header{background:var(--dark);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 18px 10px;
+       border-bottom:3px solid var(--red);}
+header h1{font-size:15px;letter-spacing:1.2px;font-weight:800;}
+header h1 span{color:var(--red);}
+
+/* Angebotskarte, bleibt immer sichtbar */
+#result{position:sticky;top:0;z-index:20;background:linear-gradient(160deg,#333336 0%,#232325 100%);
+        color:#fff;padding:15px 18px 16px;box-shadow:0 6px 22px rgba(0,0,0,.28);}
+#rauto{font-size:17px;font-weight:800;letter-spacing:-.2px;}
+#rdatum{font-size:12px;color:#B9B9BE;margin-top:3px;letter-spacing:.1px;}
+#rlinie{height:1px;background:rgba(255,255,255,.14);margin:11px 0 10px;}
+#rpreiszeile{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
+#total{font-size:37px;font-weight:800;color:#fff;line-height:1;letter-spacing:-1.2px;}
+#unter{font-size:12px;color:#B9B9BE;margin-top:5px;}
+#spar{display:none;background:var(--red);color:#fff;font-size:11px;font-weight:800;
+      padding:6px 11px;border-radius:20px;white-space:nowrap;letter-spacing:.2px;}
+#warn{display:none;font-size:13px;font-weight:700;color:#FF7A7A;margin-top:8px;}
+
+main{padding:18px 18px 0;}
+.feldname{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--grey);
+          margin:0 0 8px 3px;font-weight:800;}
+.block{margin-bottom:20px;}
+.schatten{box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
+
+/* Grosse Auswahlflaeche */
+.waehler{width:100%;background:#fff;border:none;border-radius:16px;
+         padding:16px 17px;display:flex;align-items:center;justify-content:space-between;
+         gap:12px;cursor:pointer;text-align:left;font-family:inherit;
+         box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
+.waehler:active{transform:scale(.985);}
+.waehler .titel{display:block;font-size:19px;font-weight:800;color:var(--dark);letter-spacing:-.3px;}
+.waehler .zusatz{display:block;font-size:12px;color:var(--grey);margin-top:3px;}
+.waehler .pfeil{font-size:12px;color:#fff;background:var(--red);font-weight:800;flex:none;
+                padding:8px 13px;border-radius:20px;letter-spacing:.3px;}
+
+input[type=date]{width:100%;background:#fff;border:none;border-radius:16px;
+  padding:16px 17px;font-size:19px;font-weight:800;font-family:inherit;color:var(--dark);
+  min-height:58px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
+input[type=date]:focus{outline:2px solid var(--dark);outline-offset:-2px;}
+#datumtext{font-size:12px;color:var(--grey);margin:8px 0 0 3px;font-weight:600;}
+
+.stepper{display:flex;gap:9px;align-items:center;}
+.stepper button{width:60px;height:58px;font-size:27px;font-weight:700;border:none;
+  border-radius:16px;background:#fff;color:var(--dark);cursor:pointer;font-family:inherit;
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
+.stepper button:active{background:#EDEDEF;transform:scale(.95);}
+.stepper input{flex:1;height:58px;text-align:center;font-size:21px;font-weight:800;
+  border:none;border-radius:16px;background:#fff;color:var(--dark);font-family:inherit;
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
+.schnell{display:flex;gap:7px;margin-top:9px;}
+.schnell .chip{flex:1;border:1px solid transparent;background:#fff;border-radius:12px;
+  padding:11px 0;font-size:14px;font-weight:800;text-align:center;cursor:pointer;color:var(--dark);
+  box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .1s,background .12s;}
+.schnell .chip:active{transform:scale(.94);}
+.schnell .chip.on{background:var(--red);color:#fff;box-shadow:0 4px 12px rgba(196,22,28,.35);}
+
+/* Extras, eingeklappt */
+details.extras{background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
+details.extras summary{padding:17px 17px;font-size:16px;font-weight:800;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+details.extras summary::-webkit-details-marker{display:none;}
+details.extras summary .stand{font-size:12px;color:var(--grey);font-weight:700;text-align:right;}
+details.extras[open] summary{border-bottom:1px solid var(--line);}
+.extrainhalt{padding:16px 17px 18px;}
+.zeile{margin-bottom:15px;}
+.zeile:last-child{margin-bottom:0;}
+.chips{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;}
+.chips .chip{border:1px solid var(--line);background:#fff;border-radius:11px;padding:12px 0;
+  font-size:13px;font-weight:800;text-align:center;cursor:pointer;color:var(--dark);min-width:0;
+  transition:transform .1s,background .12s;}
+.chips .chip:active{transform:scale(.92);}
+.chips .chip.on{background:var(--red);border-color:var(--red);color:#fff;
+  box-shadow:0 3px 10px rgba(196,22,28,.32);}
+.rabattzeile{display:flex;align-items:center;gap:11px;}
+.rabattzeile input{width:96px;height:50px;text-align:center;font-size:18px;font-weight:800;
+  border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--dark);font-family:inherit;}
+
+/* Aufschluesselung */
+#teile{font-size:14px;}
+#teile div{display:flex;justify-content:space-between;gap:12px;padding:9px 0;
+  border-bottom:1px solid var(--line);}
+#teile div:last-child{border-bottom:none;padding-bottom:0;}
+#teile .dick{font-weight:800;font-size:17px;padding-top:12px;}
+#teile .minus{color:#1B9E4B;font-weight:700;}
+#teile .leise{color:var(--grey);}
+
+/* Angebot */
+.karte{background:#fff;border-radius:16px;padding:17px;
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
+#knr{width:100%;height:56px;font-size:17px;border:1px solid var(--line);border-radius:14px;
+  background:#fff;padding:0 16px;color:var(--dark);font-family:inherit;font-weight:700;}
+#knr:focus{outline:none;border-color:var(--dark);}
+#nrinfo{font-size:12px;color:var(--grey);margin:8px 0 13px 3px;font-weight:600;}
+#vorschau{width:100%;min-height:200px;font-size:14px;line-height:1.6;border:1px solid var(--line);
+  border-radius:13px;padding:14px;font-family:inherit;color:var(--dark);background:#FAFAFB;resize:vertical;}
+#wa{display:block;width:100%;margin-top:13px;background:var(--wa);color:#fff;border-radius:15px;
+  padding:18px;font-size:17px;font-weight:800;text-align:center;text-decoration:none;
+  box-shadow:0 6px 18px rgba(37,211,102,.38);letter-spacing:.2px;}
+#wa:active{transform:scale(.985);}
+#wa.aus{background:#C9C9CC;pointer-events:none;box-shadow:none;}
+footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
+
+/* Fahrzeug-Liste, faehrt von unten ein */
+#sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:40;display:none;}
+#sheetbg.auf{display:block;}
+#sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--bg);
+  border-radius:20px 20px 0 0;max-height:86vh;display:flex;flex-direction:column;
+  transform:translateY(100%);transition:transform .22s ease-out;
+  padding-bottom:env(safe-area-inset-bottom);}
+#sheetbg.auf #sheet{transform:translateY(0);}
+#sheetkopf{padding:16px 18px 12px;border-bottom:1px solid var(--line);background:#fff;
+  border-radius:20px 20px 0 0;display:flex;justify-content:space-between;align-items:center;}
+#sheetkopf h3{font-size:16px;font-weight:800;}
+#zu{font-size:15px;font-weight:700;color:var(--red);cursor:pointer;padding:4px 2px;}
+#liste{overflow-y:auto;padding:10px 12px 18px;-webkit-overflow-scrolling:touch;}
+.autozeile{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 16px;
+  margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;}
+.autozeile.on{border-color:var(--red);border-width:2px;}
+.autozeile .name{display:block;font-size:16px;font-weight:700;}
+.autozeile .ab{display:block;font-size:12px;color:var(--grey);margin-top:3px;}
+.autozeile .haken{color:var(--red);font-weight:800;font-size:17px;}
 </style>
 </head>
 <body>
 <header><h1>MIETIX <span>PREISRECHNER</span></h1></header>
+
 <div id="result">
-  <div class="row"><span class="lbl">Gesamt</span><span id="total">-</span></div>
-  <div class="row"><span class="lbl" id="dauerinfo"></span><span id="protag"></span></div>
+  <div id="rauto">-</div>
+  <div id="rdatum"></div>
+  <div id="rlinie"></div>
+  <div id="rpreiszeile">
+    <div><div id="total">-</div><div id="unter"></div></div>
+    <div id="spar"></div>
+  </div>
   <div id="warn"></div>
 </div>
+
 <main>
-  <section><h2>Auto</h2><div class="chips grid2" id="autos"></div></section>
-  <section><h2>Starttag</h2><div class="chips" id="tage"></div></section>
-  <section><h2>Mietdauer</h2>
+  <div class="block">
+    <p class="feldname">Fahrzeug</p>
+    <button class="waehler" id="autoknopf" type="button">
+      <span><span class="titel" id="autoname">-</span><span class="zusatz" id="autoab"></span></span>
+      <span class="pfeil">Ändern</span>
+    </button>
+  </div>
+
+  <div class="block">
+    <p class="feldname">Startdatum</p>
+    <input type="date" id="datum" min="2026-01-01" max="2027-12-31">
+    <p id="datumtext"></p>
+  </div>
+
+  <div class="block">
+    <p class="feldname">Mietdauer in Tagen</p>
     <div class="stepper">
       <button id="minus" type="button">-</button>
       <input id="dauer" type="number" inputmode="numeric" min="1" max="365" value="3">
-      <span class="einheit">Tage</span>
       <button id="plus" type="button">+</button>
     </div>
-    <div class="chips" id="schnell"></div>
-  </section>
-  <section><h2>Extras (pro Tag)</h2>
-    <div class="opt"><span class="name">Zusatzfahrer</span><div class="chips" id="zf"></div></div>
-    <div class="opt"><span class="name">Extra-km</span><div class="chips" id="km"></div></div>
-    <div class="rabatt"><span class="name" style="font-size:13px;font-weight:600;width:86px;">Rabatt</span>
-      <input id="rab" type="number" inputmode="numeric" min="0" max="100" value="0"><span>%</span></div>
-  </section>
-  <details class="karte"><summary>Aufschlüsselung anzeigen</summary><div id="teile"></div></details>
-  <section style="margin-top:14px;"><h2>Angebot an den Kunden senden</h2>
+    <div class="schnell" id="schnell"></div>
+  </div>
+
+  <div class="block">
+    <details class="extras" id="extras">
+      <summary><span>Extras</span><span class="stand" id="extrastand">keine</span></summary>
+      <div class="extrainhalt">
+        <div class="zeile"><p class="feldname">Zusatzfahrer</p><div class="chips" id="zf"></div></div>
+        <div class="zeile"><p class="feldname">Extra-Kilometer pro Tag</p><div class="chips" id="km"></div></div>
+        <div class="zeile rabattzeile"><p class="feldname" style="margin:0;">Rabatt</p>
+          <input id="rab" type="number" inputmode="numeric" min="0" max="100" value="0"><span>%</span></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="block">
+    <p class="feldname">Aufschlüsselung</p>
+    <div class="karte"><div id="teile"></div></div>
+  </div>
+
+  <div class="block">
+    <p class="feldname">Angebot senden</p>
     <div class="karte">
-      <input class="feld" id="kname" type="text" autocomplete="off" placeholder="Name des Kunden (optional)">
-      <input class="feld" id="knr" type="tel" inputmode="tel" autocomplete="off" placeholder="Handynummer, z.B. 0176 12345678">
+      <input id="knr" type="tel" inputmode="tel" autocomplete="off" placeholder="Handynummer des Kunden">
       <div id="nrinfo">Ohne Nummer öffnet WhatsApp die Kontaktauswahl.</div>
-      <textarea id="vorschau" rows="7"></textarea>
-      <a id="wa" href="#" target="_blank" rel="noopener">Angebot per WhatsApp senden</a>
+      <textarea id="vorschau" rows="9"></textarea>
+      <a id="wa" href="#" target="_blank" rel="noopener">Per WhatsApp senden</a>
     </div>
-  </section>
+  </div>
+
   <footer>
-    Start Freitag, Samstag oder Sonntag: mindestens 2 Tage. Preise gelten für 24h bzw. volle Tage.
-    Der Mengenrabatt läuft über 30 Tage automatisch mit dem Maximalwert weiter.<br>
-    Preisstand: 27.07.2026. Preisänderungen laufen über die Excel-Preisregeln, danach wird diese Seite neu erzeugt.
+    Start Freitag, Samstag oder Sonntag: mindestens 2 Tage. Preise gelten für volle Tage (24 Stunden).
+    Der Mengenrabatt läuft über 30 Tage automatisch mit dem Maximalwert weiter.
+    Preisstand: 27.07.2026.
   </footer>
 </main>
+
+<div id="sheetbg">
+  <div id="sheet">
+    <div id="sheetkopf"><h3>Fahrzeug wählen</h3><span id="zu">Fertig</span></div>
+    <div id="liste"></div>
+  </div>
+</div>
+
 <script>
-const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1, 1, 1, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmL": ["Nein", "+50 km", "+100 km", "+150 km", "+200 km", "+300 km"], "cars": [{"n": "Audi RS Q 8", "gp": 349.23, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.35, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3", "gp": 199.82, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.15, "kaution": 0, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.08, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 AMG", "gp": 269.23, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 AMG", "gp": 289.31, "kaution": 0, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8", "gp": 449.0, "kaution": 0, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 0, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 0, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
-const st={car:0,day:0,dauer:3,zf:0,km:0,rab:0};
+const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1.0, 1.0, 1.0, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0.0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmL": ["Nein", "+50 km", "+100 km", "+150 km", "+200 km", "+300 km"], "cars": [{"n": "Audi RS Q 8", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3", "gp": 199.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 AMG", "gp": 269.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 AMG", "gp": 289.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8", "gp": 399.0, "kaution": 1950, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 1000, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
+const st={car:0,datum:null,dauer:3,zf:0,km:0,rab:0};
 let textAngefasst=false;
 const EUR=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"});
-function scaler(s,d){const W=D.faktor.reduce((a,b)=>a+b,0);let sum=Math.floor(d/7)*W;for(let k=0;k<d%7;k++)sum+=D.faktor[(s+k)%7];return sum;}
+const EUR0=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+const $=id=>document.getElementById(id);
+
+/* ---------- Datum ---------- */
+function ausISO(s){const[j,m,t]=s.split("-").map(Number);return new Date(j,m-1,t);}
+function nachISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function wtIndex(d){return (d.getDay()+6)%7;}            // 0 = Montag
+function kurz(d){return String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+".";}
+function lang(d){return kurz(d)+d.getFullYear();}
+function wtKurz(d){return ["Mo","Di","Mi","Do","Fr","Sa","So"][wtIndex(d)];}
+function plusTage(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+
+/* ---------- Rechnen ---------- */
+function scaler(s,d){const W=D.faktor.reduce((a,b)=>a+b,0);let sum=Math.floor(d/7)*W;
+  for(let k=0;k<d%7;k++)sum+=D.faktor[(s+k)%7];return sum;}
 function calc(car,day,dauer,zf,km,rab){
   const c=D.cars[car];
   if(dauer<D.mind[day])return{ok:false,mind:D.mind[day]};
@@ -118,97 +254,136 @@ function nummer(roh){
   else if(n.startsWith("0"))n="49"+n.slice(1);
   return n.length>=8?n:"";
 }
+window.mxCalc=calc;window.mxNummer=nummer;window.mxWtIndex=wtIndex;
+
+/* ---------- Angebotstext ---------- */
 function angebot(r){
-  const c=D.cars[st.car],name=(kname.value||"").trim();
-  const extras=[];
-  if(c.zf[st.zf])extras.push(D.zfL[st.zf]+" Zusatzfahrer");
-  if(c.km[st.km])extras.push(D.kmL[st.km]+" Extra-Kilometer pro Tag");
+  const c=D.cars[st.car],von=st.datum,bis=plusTage(von,st.dauer);
+  const kmTxt = c.km[st.km] ? D.kmL[st.km].replace("+","")+" pro Tag" : "im Grundpreis enthalten";
+  const zfTxt = c.zf[st.zf] ? D.zfL[st.zf]+(D.zfL[st.zf]==="1"?" Fahrer":" Fahrer") : "keine";
   const z=[];
-  z.push(name?("Hallo "+name+","):"Hallo,");
+  z.push("*"+c.n+"*");
+  z.push(wtKurz(von)+" "+kurz(von)+" bis "+wtKurz(bis)+" "+lang(bis)+", "+st.dauer+(st.dauer===1?" Tag":" Tage"));
   z.push("");
-  z.push("hier Ihr Angebot von Mietix:");
+  z.push("*Gesamtpreis "+EUR.format(r.total)+"*");
+  z.push(EUR.format(r.proTag)+" pro Tag");
   z.push("");
-  z.push(c.n);
-  z.push("Start "+D.weekdays[st.day]+", "+st.dauer+(st.dauer===1?" Tag":" Tage"));
-  if(extras.length)z.push("Inklusive "+extras.join(", "));
+  z.push("Extra-Kilometer: "+kmTxt);
+  z.push("Zusatzfahrer: "+zfTxt);
+  z.push("Kaution: "+(c.kaution?EUR0.format(c.kaution)+", kommt nach Rückgabe komplett zurück":"auf Anfrage"));
   z.push("");
-  z.push("Gesamtpreis: "+EUR.format(r.total));
-  z.push("Das sind "+EUR.format(r.proTag)+" pro Tag.");
-  if(c.kaution)z.push("Kaution: "+EUR.format(c.kaution)+", kommt komplett zurück.");
-  z.push("");
-  z.push("Melden Sie sich einfach, dann reservieren wir das Fahrzeug für Sie.");
-  z.push("");
-  z.push("Mietix Sportwagenvermietung, Wiesbaden");
+  z.push("Soll ich den Wagen für Sie reservieren?");
   return z.join("\n");
 }
-window.mxCalc=calc;window.mxNummer=nummer;
-function chips(el,labels,key,small,six){
+
+/* ---------- Bausteine ---------- */
+function chips(el,labels,key){
   el.innerHTML="";
-  if(six)el.classList.add("six");
   labels.forEach((l,i)=>{
     const b=document.createElement("div");
-    b.className="chip"+(small?" small":"");b.textContent=l;
+    b.className="chip";b.textContent=l.replace("+","").replace(" km","");
     b.onclick=()=>{st[key]=i;render();};
     el.appendChild(b);
   });
 }
 function mark(el,idx){[...el.children].forEach((c,i)=>c.classList.toggle("on",i===idx));}
+
+function baueListe(){
+  const l=$("liste");l.innerHTML="";
+  D.cars.forEach((c,i)=>{
+    const d=document.createElement("div");
+    d.className="autozeile"+(i===st.car?" on":"");
+    d.innerHTML='<span><span class="name">'+c.n+'</span><span class="ab">ab '
+      +EUR.format(c.gp)+" pro Tag</span></span>"+(i===st.car?'<span class="haken">✓</span>':"");
+    d.onclick=()=>{st.car=i;zuSheet();render();};
+    l.appendChild(d);
+  });
+}
+function aufSheet(){baueListe();$("sheetbg").classList.add("auf");}
+function zuSheet(){$("sheetbg").classList.remove("auf");}
+
+/* ---------- Anzeige ---------- */
 function render(){
-  mark(autos,st.car);mark(tage,st.day);mark(zf,st.zf);mark(km,st.km);
-  [...schnell.children].forEach(c=>c.classList.toggle("on",+c.dataset.d===st.dauer));
-  if(document.activeElement!==dauerEl)dauerEl.value=st.dauer;
-  const r=calc(st.car,st.day,st.dauer,st.zf,st.km,st.rab);
+  const c=D.cars[st.car];
+  $("autoname").textContent=c.n;
+  $("autoab").textContent="ab "+EUR.format(c.gp)+" pro Tag";
+  mark($("zf"),st.zf);mark($("km"),st.km);
+  [...$("schnell").children].forEach(x=>x.classList.toggle("on",+x.dataset.d===st.dauer));
+  if(document.activeElement!==$("dauer"))$("dauer").value=st.dauer;
+
+  const extras=[];
+  if(c.km[st.km])extras.push(D.kmL[st.km]);
+  if(c.zf[st.zf])extras.push(D.zfL[st.zf]+" Zusatzfahrer");
+  if(st.rab>0)extras.push(st.rab+" % Rabatt");
+  $("extrastand").textContent=extras.length?extras.join(", "):"keine";
+
+  const von=st.datum,tag=wtIndex(von),bis=plusTage(von,st.dauer);
+  $("datumtext").textContent=D.weekdays[tag]+", "+lang(von)+"  bis  "+wtKurz(bis)+" "+lang(bis);
+
+  const r=calc(st.car,tag,st.dauer,st.zf,st.km,st.rab);
+  const wa=$("wa");
+  $("rauto").textContent=c.n;
+  $("rdatum").textContent=wtKurz(von)+" "+kurz(von)+" bis "+wtKurz(bis)+" "+lang(bis)+"   ("+st.dauer+(st.dauer===1?" Tag":" Tage")+")";
   if(!r.ok){
-    total.textContent="-";protag.textContent="";dauerinfo.textContent="";
-    warn.style.display="block";
-    warn.textContent="Start "+D.weekdays[st.day]+": mindestens "+r.mind+" Tage Mietdauer.";
-    teile.innerHTML="";vorschau.value="";wa.classList.add("aus");wa.href="#";return;
+    $("total").textContent="-";$("unter").textContent="";$("spar").style.display="none";
+    $("warn").style.display="block";
+    $("warn").textContent="Start "+D.weekdays[tag]+": mindestens "+r.mind+" Tage Mietdauer.";
+    $("teile").innerHTML="";$("vorschau").value="";wa.classList.add("aus");wa.href="#";return;
   }
-  warn.style.display="none";
-  total.textContent=EUR.format(r.total);
-  protag.textContent=EUR.format(r.proTag)+" pro Tag";
-  dauerinfo.textContent=D.cars[st.car].n+", "+D.weekdays[st.day]+", "+st.dauer+(st.dauer===1?" Tag":" Tage");
-  const c=D.cars[st.car],z=[];
-  z.push(["Grundmiete (Tagespreise)",EUR.format(r.gm),""]);
-  if(r.pf<1)z.push(["Mengenrabatt ("+Math.round((1-r.pf)*100)+" %)","-"+EUR.format(r.gm*(1-r.pf)),"minus"]);
-  if(st.rab>0)z.push(["Extra-Rabatt ("+st.rab+" %)","-"+EUR.format(r.gm*r.pf*st.rab/100),"minus"]);
+  $("warn").style.display="none";
+  $("total").textContent=EUR.format(r.total);
+  $("unter").textContent=EUR.format(r.proTag)+" pro Tag";
+  const ersparnis=r.gm*(1-r.pf)+(st.rab>0?r.gm*r.pf*st.rab/100:0);
+  if(ersparnis>=1){$("spar").style.display="block";
+    $("spar").textContent="Sie sparen "+EUR0.format(ersparnis);}
+  else $("spar").style.display="none";
+
+  const z=[];
+  z.push(["Grundmiete "+st.dauer+(st.dauer===1?" Tag":" Tage"),EUR.format(r.gm),""]);
+  if(r.pf<1)z.push(["Mengenrabatt "+Math.round((1-r.pf)*100)+" %","-"+EUR.format(r.gm*(1-r.pf)),"minus"]);
+  if(st.rab>0)z.push(["Extra-Rabatt "+st.rab+" %","-"+EUR.format(r.gm*r.pf*st.rab/100),"minus"]);
+  if(c.km[st.km])z.push([D.kmL[st.km]+" pro Tag",EUR.format(st.dauer*c.km[st.km]),""]);
   if(c.zf[st.zf])z.push([D.zfL[st.zf]+" Zusatzfahrer",EUR.format(st.dauer*c.zf[st.zf]),""]);
-  if(c.km[st.km])z.push([D.kmL[st.km]+" Extra-km pro Tag",EUR.format(st.dauer*c.km[st.km]),""]);
-  z.push(["Gesamt",EUR.format(r.total),""]);
-  if(c.kaution)z.push(["Kaution (kommt zurück)",EUR.format(c.kaution),""]);
-  teile.innerHTML=z.map(t=>'<div><span>'+t[0]+'</span><span class="'+t[2]+'">'+t[1]+'</span></div>').join("");
-  if(!textAngefasst)vorschau.value=angebot(r);
-  const nr=nummer(knr.value);
-  nrinfo.textContent=nr?("Geht an: +"+nr):(knr.value.trim()?"Nummer noch unvollständig, WhatsApp öffnet die Kontaktauswahl.":"Ohne Nummer öffnet WhatsApp die Kontaktauswahl.");
-  wa.href=(nr?"https://wa.me/"+nr:"https://wa.me/")+"?text="+encodeURIComponent(vorschau.value);
+  z.push(["Gesamt",EUR.format(r.total),"dick"]);
+  if(c.kaution)z.push(["Kaution (kommt zurück)",EUR0.format(c.kaution),"leise"]);
+  $("teile").innerHTML=z.map(t=>'<div class="'+(t[2]==="dick"?"dick":"")+'"><span>'+t[0]
+    +'</span><span class="'+(t[2]==="minus"?"minus":t[2]==="leise"?"leise":"")+'">'+t[1]+"</span></div>").join("");
+
+  if(!textAngefasst)$("vorschau").value=angebot(r);
+  const nr=nummer($("knr").value);
+  $("nrinfo").textContent=nr?("Geht an: +"+nr)
+    :($("knr").value.trim()?"Nummer noch unvollständig, WhatsApp öffnet die Kontaktauswahl."
+                           :"Ohne Nummer öffnet WhatsApp die Kontaktauswahl.");
+  wa.href="https://wa.me/"+(nr||"")+"?text="+encodeURIComponent($("vorschau").value);
   wa.classList.remove("aus");
 }
-function setDauer(v){st.dauer=Math.max(1,Math.min(D.qamax,Math.round(v)||1));render();}
-const autos=document.getElementById("autos"),tage=document.getElementById("tage"),
-  zf=document.getElementById("zf"),km=document.getElementById("km"),
-  schnell=document.getElementById("schnell"),dauerEl=document.getElementById("dauer"),
-  total=document.getElementById("total"),protag=document.getElementById("protag"),
-  dauerinfo=document.getElementById("dauerinfo"),warn=document.getElementById("warn"),
-  teile=document.getElementById("teile"),vorschau=document.getElementById("vorschau"),
-  kname=document.getElementById("kname"),knr=document.getElementById("knr"),
-  nrinfo=document.getElementById("nrinfo"),wa=document.getElementById("wa");
-chips(autos,D.cars.map(c=>c.n),"car");
-chips(tage,D.weekdays.map(w=>w.slice(0,2)),"day",true);
-chips(zf,D.zfL,"zf",true,true);
-chips(km,D.kmL,"km",true,true);
-[2,3,7,14,30].forEach(d=>{
+function setDauer(v){st.dauer=Math.max(1,Math.min(D.qamax,Math.round(v)||1));textAngefasst=false;render();}
+
+/* ---------- Start ---------- */
+chips($("zf"),D.zfL,"zf");
+chips($("km"),D.kmL,"km");
+[2,3,4,7,14,30].forEach(d=>{
   const b=document.createElement("div");
-  b.className="chip small";b.textContent=d;b.dataset.d=d;
-  b.onclick=()=>setDauer(d);schnell.appendChild(b);
+  b.className="chip";b.textContent=d;b.dataset.d=d;
+  b.onclick=()=>setDauer(d);$("schnell").appendChild(b);
 });
-document.getElementById("minus").onclick=()=>setDauer(st.dauer-1);
-document.getElementById("plus").onclick=()=>setDauer(st.dauer+1);
-dauerEl.addEventListener("input",()=>{if(dauerEl.value!=="")setDauer(+dauerEl.value);});
-dauerEl.addEventListener("blur",()=>{dauerEl.value=st.dauer;});
-document.getElementById("rab").addEventListener("input",e=>{st.rab=Math.max(0,Math.min(100,+e.target.value||0));render();});
-kname.addEventListener("input",()=>{textAngefasst=false;render();});
-knr.addEventListener("input",render);
-vorschau.addEventListener("input",()=>{textAngefasst=true;render();});
+const heute=new Date(), min=ausISO("2026-01-01"), max=ausISO("2027-12-31");
+st.datum = heute<min?min : heute>max?min : heute;
+$("datum").value=nachISO(st.datum);
+$("datum").addEventListener("change",e=>{
+  if(!e.target.value)return;
+  st.datum=ausISO(e.target.value);textAngefasst=false;render();
+});
+$("autoknopf").onclick=aufSheet;
+$("zu").onclick=zuSheet;
+$("sheetbg").onclick=e=>{if(e.target.id==="sheetbg")zuSheet();};
+$("minus").onclick=()=>setDauer(st.dauer-1);
+$("plus").onclick=()=>setDauer(st.dauer+1);
+$("dauer").addEventListener("input",()=>{if($("dauer").value!=="")setDauer(+$("dauer").value);});
+$("dauer").addEventListener("blur",()=>{$("dauer").value=st.dauer;});
+$("rab").addEventListener("input",e=>{st.rab=Math.max(0,Math.min(100,+e.target.value||0));textAngefasst=false;render();});
+$("knr").addEventListener("input",render);
+$("vorschau").addEventListener("input",()=>{textAngefasst=true;render();});
 render();
 </script>
 </body>
