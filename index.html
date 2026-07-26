@@ -65,6 +65,16 @@ input[type=date]:focus{outline:2px solid var(--dark);outline-offset:-2px;}
   border:none;border-radius:16px;background:#fff;color:var(--dark);font-family:inherit;
   box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
 
+details.extras{background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
+details.extras summary{padding:17px;font-size:16px;font-weight:800;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+details.extras summary::-webkit-details-marker{display:none;}
+details.extras summary .stand{font-size:12px;color:var(--grey);font-weight:700;text-align:right;}
+details.extras summary::after{content:"Ändern";font-size:12px;color:var(--red);font-weight:800;flex:none;}
+details.extras[open] summary::after{content:"Zu";}
+details.extras[open] summary{border-bottom:1px solid var(--line);}
+.extrainhalt{padding:16px 17px 18px;}
 .zeile{margin-bottom:16px;}
 .zeile:last-child{margin-bottom:0;}
 .chips{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;}
@@ -106,11 +116,7 @@ input[type=date]:focus{outline:2px solid var(--dark);outline-offset:-2px;}
 .knopf.gruen{background:var(--wa);color:#fff;box-shadow:0 6px 18px rgba(37,211,102,.38);}
 .knopf.hell{background:#fff;color:var(--dark);border:1.5px solid var(--line);}
 .knopf.aus{background:#C9C9CC;color:#fff;pointer-events:none;box-shadow:none;border:none;}
-details.nummer{margin-top:14px;border-top:1px solid var(--line);padding-top:13px;}
-details.nummer summary{font-size:13px;font-weight:700;color:var(--grey);cursor:pointer;
-  list-style:none;padding:2px 0;}
-details.nummer summary::-webkit-details-marker{display:none;}
-details.nummer input{margin-top:11px;}
+#knr{margin-top:12px;}
 footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
 
 /* Fahrzeug-Liste, faehrt von unten ein */
@@ -164,17 +170,20 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
   </div>
 
   <div class="block">
-    <div class="karte">
-      <div class="zeile"><p class="feldname">Extra-Kilometer pro Tag</p>
-        <div class="kmzeile">
-          <input id="km" type="number" inputmode="numeric" min="0" max="2000" step="10" value="0">
-          <span id="kminfo"></span>
+    <details class="extras" id="extras">
+      <summary><span>Extras</span><span class="stand" id="extrastand">keine</span></summary>
+      <div class="extrainhalt">
+        <div class="zeile"><p class="feldname">Extra-Kilometer insgesamt</p>
+          <div class="kmzeile">
+            <input id="km" type="number" inputmode="numeric" min="0" max="20000" step="50" value="0">
+            <span id="kminfo"></span>
+          </div>
         </div>
+        <div class="zeile"><p class="feldname">Zusatzfahrer</p><div class="chips" id="zf"></div></div>
+        <div class="zeile rabattzeile"><p class="feldname" style="margin:0;">Rabatt</p>
+          <input id="rab" type="number" inputmode="numeric" min="0" max="100" value="0"><span>%</span></div>
       </div>
-      <div class="zeile"><p class="feldname">Zusatzfahrer</p><div class="chips" id="zf"></div></div>
-      <div class="zeile rabattzeile"><p class="feldname" style="margin:0;">Rabatt</p>
-        <input id="rab" type="number" inputmode="numeric" min="0" max="100" value="0"><span>%</span></div>
-    </div>
+    </details>
   </div>
 
   <div class="block">
@@ -193,14 +202,10 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
     <p class="feldname">Angebot senden</p>
     <div class="karte">
       <textarea id="vorschau" rows="10"></textarea>
-      <button id="teilen" type="button" class="knopf gruen">Angebot teilen</button>
+      <input id="knr" type="tel" inputmode="tel" autocomplete="off" placeholder="Handynummer des Kunden (optional)">
+      <div id="nrinfo"></div>
+      <button id="senden" type="button" class="knopf gruen">Angebot teilen</button>
       <button id="kopieren" type="button" class="knopf hell">Text kopieren</button>
-      <details class="nummer">
-        <summary>Direkt an eine Nummer senden</summary>
-        <input id="knr" type="tel" inputmode="tel" autocomplete="off" placeholder="Handynummer, z.B. 0176 12345678">
-        <div id="nrinfo"></div>
-        <a id="wa" href="#" target="_blank" rel="noopener" class="knopf gruen">Per WhatsApp an die Nummer</a>
-      </details>
     </div>
   </div>
 
@@ -219,7 +224,7 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
 </div>
 
 <script>
-const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1.0, 1.0, 1.0, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0.0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmStufen": [50, 100, 150, 200, 300], "cars": [{"n": "Audi RS Q 8", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3", "gp": 199.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 AMG", "gp": 269.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 AMG", "gp": 289.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8", "gp": 399.0, "kaution": 1950, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 1000, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
+const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1.0, 1.0, 1.0, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0.0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmStufen": [50, 100, 150, 200, 300], "cars": [{"n": "Audi RS Q8", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3", "gp": 199.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 AMG", "gp": 269.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 AMG", "gp": 289.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8", "gp": 399.0, "kaution": 1950, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 1000, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
 const st={car:0,datum:null,dauer:3,zf:0,km:0,rab:0};   // km = Kilometer pro Tag, frei
 let textAngefasst=false;
 const EUR=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"});
@@ -251,12 +256,12 @@ function kmPreis(car,km){
   }
   return Math.round(km*maxPreis/maxKm);
 }
-function calc(car,day,dauer,zf,km,rab){
+function calc(car,day,dauer,zf,kmGesamt,rab){
   const c=D.cars[car];
   if(dauer<D.mind[day])return{ok:false,mind:D.mind[day]};
   const pf=1-D.rabatt[Math.min(dauer,D.days)-1];
   const gm=c.gp*scaler(day,dauer);
-  const kmT=kmPreis(car,km);
+  const kmT=kmPreis(car,(kmGesamt||0)/dauer);   // Preisstaffel gilt je Tag
   const zus=c.zf[zf]+kmT;
   const total=(1-rab/100)*gm*pf+dauer*zus;
   return{ok:true,gm:gm,pf:pf,zus:zus,kmT:kmT,total:total,proTag:total/dauer};
@@ -328,21 +333,25 @@ function render(){
   if(document.activeElement!==$("km"))$("km").value=st.km;
   if(document.activeElement!==$("dauer"))$("dauer").value=st.dauer;
 
-  $("kminfo").textContent = st.km>0
-    ? "+"+EUR.format(kmPreis(st.car,st.km))+" pro Tag"
-    : "im Grundpreis enthalten";
-
   const von=st.datum,tag=wtIndex(von),bis=plusTage(von,st.dauer);
   $("datumtext").textContent=D.weekdays[tag]+", "+lang(von)+"  bis  "+wtKurz(bis)+" "+lang(bis);
 
   const r=calc(st.car,tag,st.dauer,st.zf,st.km,st.rab);
-  const wa=$("wa");
+
+  $("kminfo").textContent = st.km>0
+    ? "+"+EUR.format(st.dauer*kmPreis(st.car,st.km/st.dauer))+" gesamt"
+    : "im Grundpreis enthalten";
+  const gewaehlt=[];
+  if(st.km>0)gewaehlt.push(st.km+" km");
+  if(c.zf[st.zf])gewaehlt.push(D.zfL[st.zf]+" Zusatzfahrer");
+  if(st.rab>0)gewaehlt.push(st.rab+" % Rabatt");
+  $("extrastand").textContent=gewaehlt.length?gewaehlt.join(", "):"keine";
   if(!r.ok){
     $("total").textContent="-";$("unter").textContent="";$("spar").style.display="none";
     $("warn").style.display="block";
     $("warn").textContent="Start "+D.weekdays[tag]+": mindestens "+r.mind+" Tage Mietdauer.";
-    $("teile").innerHTML="";$("kaution").textContent="";$("vorschau").value="";wa.classList.add("aus");wa.href="#";
-    $("teilen").classList.add("aus");$("kopieren").classList.add("aus");return;
+    $("teile").innerHTML="";$("kaution").textContent="";$("vorschau").value="";
+    $("senden").classList.add("aus");$("kopieren").classList.add("aus");return;
   }
   $("warn").style.display="none";
   $("total").textContent=EUR.format(r.total);
@@ -356,7 +365,7 @@ function render(){
   z.push(["Grundmiete "+st.dauer+(st.dauer===1?" Tag":" Tage"),EUR.format(r.gm),""]);
   if(r.pf<1)z.push(["Mengenrabatt "+Math.round((1-r.pf)*100)+" %","-"+EUR.format(r.gm*(1-r.pf)),"minus"]);
   if(st.rab>0)z.push(["Extra-Rabatt "+st.rab+" %","-"+EUR.format(r.gm*r.pf*st.rab/100),"minus"]);
-  if(r.kmT)z.push([st.km+" km pro Tag",EUR.format(st.dauer*r.kmT),""]);
+  if(r.kmT)z.push([st.km+" km insgesamt",EUR.format(st.dauer*r.kmT),""]);
   if(c.zf[st.zf])z.push([D.zfL[st.zf]+" Zusatzfahrer",EUR.format(st.dauer*c.zf[st.zf]),""]);
   $("teile").innerHTML=z.map(t=>'<div class="'+(t[2]==="dick"?"dick":"")+'"><span>'+t[0]
     +'</span><span class="'+(t[2]==="minus"?"minus":t[2]==="leise"?"leise":"")+'">'+t[1]+"</span></div>").join("");
@@ -366,19 +375,18 @@ function render(){
     : "Kaution auf Anfrage";
   if(!textAngefasst)$("vorschau").value=angebot(r);
   const nr=nummer($("knr").value);
-  $("nrinfo").textContent=nr?("Geht an: +"+nr)
-    :($("knr").value.trim()?"Nummer noch unvollständig, WhatsApp öffnet die Kontaktauswahl."
-                           :"Ohne Nummer öffnet WhatsApp die Kontaktauswahl.");
-  wa.href="https://wa.me/"+(nr||"")+"?text="+encodeURIComponent($("vorschau").value);
-  wa.classList.remove("aus");
-  $("teilen").classList.remove("aus");$("kopieren").classList.remove("aus");
+  $("nrinfo").textContent = nr ? "Geht an +"+nr
+    : ($("knr").value.trim() ? "Nummer noch unvollständig"
+                             : "Ohne Nummer: Angebot teilen und den Chat auswählen");
+  $("senden").textContent = nr ? "Per WhatsApp senden" : "Angebot teilen";
+  $("senden").classList.remove("aus");$("kopieren").classList.remove("aus");
 }
 function setDauer(v){st.dauer=Math.max(1,Math.min(D.qamax,Math.round(v)||1));textAngefasst=false;render();}
 
 /* ---------- Start ---------- */
 chips($("zf"),D.zfL,"zf");
 $("km").addEventListener("input",e=>{
-  st.km=Math.max(0,Math.min(2000,Math.round(+e.target.value)||0));textAngefasst=false;render();});
+  st.km=Math.max(0,Math.min(20000,Math.round(+e.target.value)||0));textAngefasst=false;render();});
 $("km").addEventListener("blur",()=>{$("km").value=st.km;});
 const heute=new Date(), min=ausISO("2026-01-01"), max=ausISO("2027-12-31");
 st.datum = heute<min?min : heute>max?min : heute;
@@ -401,14 +409,12 @@ function rueckmeldung(knopf,text){
   const alt=knopf.textContent;knopf.textContent=text;
   setTimeout(()=>{knopf.textContent=alt;},1600);
 }
-$("teilen").onclick=async()=>{
-  const text=$("vorschau").value;
-  if(navigator.share){
-    try{await navigator.share({text:text});}catch(e){}
-  }else{
-    try{await navigator.clipboard.writeText(text);rueckmeldung($("teilen"),"Text kopiert");}
-    catch(e){window.open($("wa").href,"_blank");}
-  }
+$("senden").onclick=async()=>{
+  const text=$("vorschau").value, nr=nummer($("knr").value);
+  if(nr){window.open("https://wa.me/"+nr+"?text="+encodeURIComponent(text),"_blank");return;}
+  if(navigator.share){try{await navigator.share({text:text});}catch(e){}return;}
+  try{await navigator.clipboard.writeText(text);rueckmeldung($("senden"),"Text kopiert");}
+  catch(e){window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank");}
 };
 $("kopieren").onclick=async()=>{
   const text=$("vorschau").value;
