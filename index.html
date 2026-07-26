@@ -20,12 +20,9 @@ header h1 span{color:var(--red);}
 
 /* Angebotskarte, bleibt immer sichtbar */
 #result{position:sticky;top:0;z-index:20;background:linear-gradient(160deg,#333336 0%,#232325 100%);
-        color:#fff;padding:15px 18px 16px;box-shadow:0 6px 22px rgba(0,0,0,.28);}
-#rauto{font-size:17px;font-weight:800;letter-spacing:-.2px;}
-#rdatum{font-size:12px;color:#B9B9BE;margin-top:3px;letter-spacing:.1px;}
-#rlinie{height:1px;background:rgba(255,255,255,.14);margin:11px 0 10px;}
+        color:#fff;padding:12px 18px 13px;box-shadow:0 6px 22px rgba(0,0,0,.28);}
 #rpreiszeile{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
-#total{font-size:37px;font-weight:800;color:#fff;line-height:1;letter-spacing:-1.2px;}
+#total{font-size:33px;font-weight:800;color:#fff;line-height:1;letter-spacing:-1.1px;}
 #unter{font-size:12px;color:#B9B9BE;margin-top:5px;}
 #spar{display:none;background:var(--red);color:#fff;font-size:11px;font-weight:800;
       padding:6px 11px;border-radius:20px;white-space:nowrap;letter-spacing:.2px;}
@@ -63,24 +60,10 @@ input[type=date]:focus{outline:2px solid var(--dark);outline-offset:-2px;}
   border:none;border-radius:16px;background:#fff;color:var(--dark);font-family:inherit;
   box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
 
-/* Extras, eingeklappt */
-details.extras{background:#fff;border-radius:16px;overflow:hidden;
-  box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.045);}
-details.extras summary{padding:17px 17px;font-size:16px;font-weight:800;cursor:pointer;
-  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;}
-details.extras summary::-webkit-details-marker{display:none;}
-details.extras summary .stand{font-size:12px;color:var(--grey);font-weight:700;text-align:right;}
-details.extras[open] summary{border-bottom:1px solid var(--line);}
-.extrainhalt{padding:16px 17px 18px;}
-.zeile{margin-bottom:15px;}
-.zeile:last-child{margin-bottom:0;}
-.chips{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;}
-.chips .chip{border:1px solid var(--line);background:#fff;border-radius:11px;padding:12px 0;
-  font-size:13px;font-weight:800;text-align:center;cursor:pointer;color:var(--dark);min-width:0;
-  transition:transform .1s,background .12s;}
-.chips .chip:active{transform:scale(.92);}
-.chips .chip.on{background:var(--red);border-color:var(--red);color:#fff;
-  box-shadow:0 3px 10px rgba(196,22,28,.32);}
+.kmzeile{display:flex;align-items:center;gap:12px;}
+.kmzeile input{width:118px;height:50px;text-align:center;font-size:18px;font-weight:800;
+  border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--dark);font-family:inherit;}
+#kminfo{font-size:13px;color:var(--grey);font-weight:700;}
 .rabattzeile{display:flex;align-items:center;gap:11px;}
 .rabattzeile input{width:96px;height:50px;text-align:center;font-size:18px;font-weight:800;
   border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--dark);font-family:inherit;}
@@ -143,9 +126,6 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
 <header><h1>MIETIX <span>PREISRECHNER</span></h1></header>
 
 <div id="result">
-  <div id="rauto">-</div>
-  <div id="rdatum"></div>
-  <div id="rlinie"></div>
   <div id="rpreiszeile">
     <div><div id="total">-</div><div id="unter"></div></div>
     <div id="spar"></div>
@@ -178,15 +158,17 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
   </div>
 
   <div class="block">
-    <details class="extras" id="extras">
-      <summary><span>Extras</span><span class="stand" id="extrastand">keine</span></summary>
-      <div class="extrainhalt">
-        <div class="zeile"><p class="feldname">Zusatzfahrer</p><div class="chips" id="zf"></div></div>
-        <div class="zeile"><p class="feldname">Extra-Kilometer pro Tag</p><div class="chips" id="km"></div></div>
-        <div class="zeile rabattzeile"><p class="feldname" style="margin:0;">Rabatt</p>
-          <input id="rab" type="number" inputmode="numeric" min="0" max="100" value="0"><span>%</span></div>
+    <div class="karte">
+      <div class="zeile"><p class="feldname">Extra-Kilometer pro Tag</p>
+        <div class="kmzeile">
+          <input id="km" type="number" inputmode="numeric" min="0" max="2000" step="10" value="0">
+          <span id="kminfo"></span>
+        </div>
       </div>
-    </details>
+      <div class="zeile"><p class="feldname">Zusatzfahrer</p><div class="chips" id="zf"></div></div>
+      <div class="zeile rabattzeile"><p class="feldname" style="margin:0;">Rabatt</p>
+        <input id="rab" type="number" inputmode="numeric" min="0" max="100" value="0"><span>%</span></div>
+    </div>
   </div>
 
   <div class="block">
@@ -224,8 +206,8 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
 </div>
 
 <script>
-const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1.0, 1.0, 1.0, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0.0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmL": ["Nein", "+50 km", "+100 km", "+150 km", "+200 km", "+300 km"], "cars": [{"n": "Audi RS Q 8", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3", "gp": 199.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 AMG", "gp": 269.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 AMG", "gp": 289.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8", "gp": 399.0, "kaution": 1950, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 1000, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
-const st={car:0,datum:null,dauer:3,zf:0,km:0,rab:0};
+const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1.0, 1.0, 1.0, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0.0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmStufen": [50, 100, 150, 200, 300], "cars": [{"n": "Audi RS Q 8", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3", "gp": 199.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 AMG", "gp": 269.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 AMG", "gp": 289.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8", "gp": 399.0, "kaution": 1950, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 1000, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
+const st={car:0,datum:null,dauer:3,zf:0,km:0,rab:0};   // km = Kilometer pro Tag, frei
 let textAngefasst=false;
 const EUR=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"});
 const EUR0=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0});
@@ -243,14 +225,28 @@ function plusTage(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
 /* ---------- Rechnen ---------- */
 function scaler(s,d){const W=D.faktor.reduce((a,b)=>a+b,0);let sum=Math.floor(d/7)*W;
   for(let k=0;k<d%7;k++)sum+=D.faktor[(s+k)%7];return sum;}
+function kmPreis(car,km){
+  km=Math.max(0,Math.round(km)||0);
+  if(!km)return 0;
+  const preise=D.cars[car].km.slice(1), stufen=D.kmStufen;
+  const maxKm=stufen[stufen.length-1], maxPreis=preise[preise.length-1];
+  if(km>=maxKm)return Math.round(km*maxPreis/maxKm);
+  let x0=0,y0=0;
+  for(let i=0;i<stufen.length;i++){
+    if(km<=stufen[i])return Math.round(y0+(preise[i]-y0)*(km-x0)/(stufen[i]-x0));
+    x0=stufen[i];y0=preise[i];
+  }
+  return Math.round(km*maxPreis/maxKm);
+}
 function calc(car,day,dauer,zf,km,rab){
   const c=D.cars[car];
   if(dauer<D.mind[day])return{ok:false,mind:D.mind[day]};
   const pf=1-D.rabatt[Math.min(dauer,D.days)-1];
   const gm=c.gp*scaler(day,dauer);
-  const zus=c.zf[zf]+c.km[km];
+  const kmT=kmPreis(car,km);
+  const zus=c.zf[zf]+kmT;
   const total=(1-rab/100)*gm*pf+dauer*zus;
-  return{ok:true,gm:gm,pf:pf,zus:zus,total:total,proTag:total/dauer};
+  return{ok:true,gm:gm,pf:pf,zus:zus,kmT:kmT,total:total,proTag:total/dauer};
 }
 function nummer(roh){
   let n=(roh||"").replace(/[^0-9+]/g,"");
@@ -260,21 +256,20 @@ function nummer(roh){
   else if(n.startsWith("0"))n="49"+n.slice(1);
   return n.length>=8?n:"";
 }
-window.mxCalc=calc;window.mxNummer=nummer;window.mxWtIndex=wtIndex;
+window.mxCalc=calc;window.mxNummer=nummer;window.mxWtIndex=wtIndex;window.mxKmPreis=kmPreis;
 
 /* ---------- Angebotstext ---------- */
 function angebot(r){
   const c=D.cars[st.car],von=st.datum,bis=plusTage(von,st.dauer);
-  const kmTxt = c.km[st.km] ? D.kmL[st.km].replace("+","")+" pro Tag" : "im Grundpreis enthalten";
-  const zfTxt = c.zf[st.zf] ? D.zfL[st.zf]+(D.zfL[st.zf]==="1"?" Fahrer":" Fahrer") : "keine";
+  const kmTxt = st.km>0 ? st.km+" km" : "im Grundpreis enthalten";
+  const zfTxt = c.zf[st.zf] ? D.zfL[st.zf] : "keine";
   const z=[];
-  z.push("*"+c.n+"*");
+  z.push(c.n);
   z.push(wtKurz(von)+" "+kurz(von)+" bis "+wtKurz(bis)+" "+lang(bis)+", "+st.dauer+(st.dauer===1?" Tag":" Tage"));
   z.push("");
-  z.push("*Gesamtpreis "+EUR.format(r.total)+"*");
-  z.push(EUR.format(r.proTag)+" pro Tag");
+  z.push("Gesamtpreis "+EUR.format(r.total));
   z.push("");
-  z.push("Extra-Kilometer: "+kmTxt);
+  z.push("Kilometer: "+kmTxt);
   z.push("Zusatzfahrer: "+zfTxt);
   z.push("Kaution: "+(c.kaution?EUR0.format(c.kaution)+", kommt nach Rückgabe komplett zurück":"auf Anfrage"));
   z.push("");
@@ -316,22 +311,19 @@ function render(){
   $("autoname").textContent=c.n;
   $("autoab").textContent="ab "+EUR.format(c.gp)+" pro Tag, Kaution "
     +(c.kaution?EUR0.format(c.kaution):"auf Anfrage");
-  mark($("zf"),st.zf);mark($("km"),st.km);
+  mark($("zf"),st.zf);
+  if(document.activeElement!==$("km"))$("km").value=st.km;
   if(document.activeElement!==$("dauer"))$("dauer").value=st.dauer;
 
-  const extras=[];
-  if(c.km[st.km])extras.push(D.kmL[st.km]);
-  if(c.zf[st.zf])extras.push(D.zfL[st.zf]+" Zusatzfahrer");
-  if(st.rab>0)extras.push(st.rab+" % Rabatt");
-  $("extrastand").textContent=extras.length?extras.join(", "):"keine";
+  $("kminfo").textContent = st.km>0
+    ? "+"+EUR.format(kmPreis(st.car,st.km))+" pro Tag"
+    : "im Grundpreis enthalten";
 
   const von=st.datum,tag=wtIndex(von),bis=plusTage(von,st.dauer);
   $("datumtext").textContent=D.weekdays[tag]+", "+lang(von)+"  bis  "+wtKurz(bis)+" "+lang(bis);
 
   const r=calc(st.car,tag,st.dauer,st.zf,st.km,st.rab);
   const wa=$("wa");
-  $("rauto").textContent=c.n;
-  $("rdatum").textContent=wtKurz(von)+" "+kurz(von)+" bis "+wtKurz(bis)+" "+lang(bis)+"   ("+st.dauer+(st.dauer===1?" Tag":" Tage")+")";
   if(!r.ok){
     $("total").textContent="-";$("unter").textContent="";$("spar").style.display="none";
     $("warn").style.display="block";
@@ -351,7 +343,7 @@ function render(){
   z.push(["Grundmiete "+st.dauer+(st.dauer===1?" Tag":" Tage"),EUR.format(r.gm),""]);
   if(r.pf<1)z.push(["Mengenrabatt "+Math.round((1-r.pf)*100)+" %","-"+EUR.format(r.gm*(1-r.pf)),"minus"]);
   if(st.rab>0)z.push(["Extra-Rabatt "+st.rab+" %","-"+EUR.format(r.gm*r.pf*st.rab/100),"minus"]);
-  if(c.km[st.km])z.push([D.kmL[st.km]+" pro Tag",EUR.format(st.dauer*c.km[st.km]),""]);
+  if(r.kmT)z.push([st.km+" km pro Tag",EUR.format(st.dauer*r.kmT),""]);
   if(c.zf[st.zf])z.push([D.zfL[st.zf]+" Zusatzfahrer",EUR.format(st.dauer*c.zf[st.zf]),""]);
   z.push(["Gesamt",EUR.format(r.total),"dick"]);
   if(c.kaution)z.push(["Kaution (kommt zurück)",EUR0.format(c.kaution),"leise"]);
@@ -371,7 +363,9 @@ function setDauer(v){st.dauer=Math.max(1,Math.min(D.qamax,Math.round(v)||1));tex
 
 /* ---------- Start ---------- */
 chips($("zf"),D.zfL,"zf");
-chips($("km"),D.kmL,"km");
+$("km").addEventListener("input",e=>{
+  st.km=Math.max(0,Math.min(2000,Math.round(+e.target.value)||0));textAngefasst=false;render();});
+$("km").addEventListener("blur",()=>{$("km").value=st.km;});
 const heute=new Date(), min=ausISO("2026-01-01"), max=ausISO("2027-12-31");
 st.datum = heute<min?min : heute>max?min : heute;
 $("datum").value=nachISO(st.datum);
@@ -414,7 +408,7 @@ try{
   const g=JSON.parse(localStorage.getItem("mietix")||"{}");
   if(typeof g.car==="number"&&D.cars[g.car])st.car=g.car;
   if(typeof g.zf==="number"&&g.zf<D.zfL.length)st.zf=g.zf;
-  if(typeof g.km==="number"&&g.km<D.kmL.length)st.km=g.km;
+  if(typeof g.km==="number"&&g.km>=0)st.km=g.km;
   if(typeof g.dauer==="number")st.dauer=g.dauer;
 }catch(e){}
 const merken=()=>{try{localStorage.setItem("mietix",
