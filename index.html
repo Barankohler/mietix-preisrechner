@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2E2E30">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mietix Preise">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Mietix Preisrechner</title>
+<style>
+:root{--red:#C4161C;--dark:#2E2E30;--grey:#6F6F72;--line:#D9D9DB;--bg:#F4F4F5;--wa:#25D366;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--dark);padding-bottom:30px;-webkit-text-size-adjust:100%;}
+header{background:var(--dark);color:#fff;padding:calc(9px + env(safe-area-inset-top)) 16px 9px;border-bottom:3px solid var(--red);}
+header h1{font-size:16px;letter-spacing:.4px;}header h1 span{color:var(--red);}
+#result{position:sticky;top:0;z-index:9;background:#fff;border-bottom:1px solid var(--line);padding:9px 16px;box-shadow:0 2px 10px rgba(0,0,0,.08);}
+#result .row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+#result .lbl{font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;}
+#total{font-size:30px;font-weight:800;color:var(--red);line-height:1.1;}
+#protag{font-size:14px;font-weight:700;}
+#warn{display:none;font-size:13px;font-weight:700;color:var(--red);margin-top:3px;}
+main{padding:12px 16px;}
+section{margin-bottom:14px;}
+h2{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--grey);margin-bottom:6px;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chips.grid2{display:grid;grid-template-columns:1fr 1fr;}
+.chips.six{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;}
+.chips.six .chip{min-width:0;padding:9px 0;}
+.chip{border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 10px;font-size:15px;font-weight:600;text-align:center;color:var(--dark);cursor:pointer;user-select:none;}
+.chip.small{padding:9px 0;font-size:13px;flex:1 1 0;min-width:40px;}
+.chip.on{background:var(--red);border-color:var(--red);color:#fff;}
+.stepper{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+.stepper button{width:52px;height:46px;font-size:24px;font-weight:700;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--dark);cursor:pointer;}
+.stepper input{flex:1;height:46px;text-align:center;font-size:18px;font-weight:700;border:2px solid var(--dark);border-radius:10px;background:#fff;color:var(--dark);}
+.stepper .einheit{font-size:14px;color:var(--grey);width:42px;}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.opt .name{font-size:13px;font-weight:600;width:86px;flex:none;}
+.opt .chips{flex:1;}
+.feld{width:100%;height:46px;font-size:16px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 12px;color:var(--dark);margin-bottom:8px;}
+.feld:focus{outline:none;border-color:var(--dark);}
+.rabatt{display:flex;align-items:center;gap:8px;}
+.rabatt input{width:84px;height:46px;text-align:center;font-size:16px;font-weight:700;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--dark);}
+.karte{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;}
+details.karte summary{font-size:13px;font-weight:700;cursor:pointer;}
+#teile{margin-top:8px;font-size:13px;}
+#teile div{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px dashed var(--line);}
+#teile div:last-child{border-bottom:none;font-weight:800;}
+#teile .minus{color:var(--red);}
+#vorschau{width:100%;min-height:132px;font-size:13px;line-height:1.5;border:1px solid var(--line);border-radius:10px;padding:10px;font-family:inherit;color:var(--dark);background:#fff;resize:vertical;}
+#wa{display:block;width:100%;margin-top:10px;background:var(--wa);color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;text-align:center;text-decoration:none;}
+#wa.aus{background:#c8c8cb;pointer-events:none;}
+#nrinfo{font-size:11px;color:var(--grey);margin-bottom:8px;}
+footer{margin-top:16px;font-size:11px;color:var(--grey);line-height:1.5;}
+</style>
+</head>
+<body>
+<header><h1>MIETIX <span>PREISRECHNER</span></h1></header>
+<div id="result">
+  <div class="row"><span class="lbl">Gesamt</span><span id="total">-</span></div>
+  <div class="row"><span class="lbl" id="dauerinfo"></span><span id="protag"></span></div>
+  <div id="warn"></div>
+</div>
+<main>
+  <section><h2>Auto</h2><div class="chips grid2" id="autos"></div></section>
+  <section><h2>Starttag</h2><div class="chips" id="tage"></div></section>
+  <section><h2>Mietdauer</h2>
+    <div class="stepper">
+      <button id="minus" type="button">-</button>
+      <input id="dauer" type="number" inputmode="numeric" min="1" max="365" value="3">
+      <span class="einheit">Tage</span>
+      <button id="plus" type="button">+</button>
+    </div>
+    <div class="chips" id="schnell"></div>
+  </section>
+  <section><h2>Extras (pro Tag)</h2>
+    <div class="opt"><span class="name">Schutz</span><div class="chips" id="vers"></div></div>
+    <div class="opt"><span class="name">Jungfahrer</span><div class="chips" id="jf"></div></div>
+    <div class="opt"><span class="name">Zusatzfahrer</span><div class="chips" id="zf"></div></div>
+    <div class="opt"><span class="name">Extra-km</span><div class="chips" id="km"></div></div>
+    <div class="rabatt"><span class="name" style="font-size:13px;font-weight:600;width:86px;">Rabatt</span>
+      <input id="rab" type="number" inputmode="numeric" min="0" max="100" value="0"><span>%</span></div>
+  </section>
+  <details class="karte"><summary>Aufschlüsselung anzeigen</summary><div id="teile"></div></details>
+  <section style="margin-top:14px;"><h2>Angebot an den Kunden senden</h2>
+    <div class="karte">
+      <input class="feld" id="kname" type="text" autocomplete="off" placeholder="Name des Kunden (optional)">
+      <input class="feld" id="knr" type="tel" inputmode="tel" autocomplete="off" placeholder="Handynummer, z.B. 0176 12345678">
+      <div id="nrinfo">Ohne Nummer öffnet WhatsApp die Kontaktauswahl.</div>
+      <textarea id="vorschau" rows="7"></textarea>
+      <a id="wa" href="#" target="_blank" rel="noopener">Angebot per WhatsApp senden</a>
+    </div>
+  </section>
+  <footer>
+    Start Freitag, Samstag oder Sonntag: mindestens 2 Tage. Preise gelten für 24h bzw. volle Tage.
+    Der Mengenrabatt läuft über 30 Tage automatisch mit dem Maximalwert weiter.<br>
+    Preisstand: 26.07.2026. Preisänderungen laufen über die Excel-Preisregeln, danach wird diese Seite neu erzeugt.
+  </footer>
+</main>
+<script>
+const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1, 1, 1, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "versL": ["Kein Schutz", "Smart-Schutz", "Komfort-Schutz", "Exklusiv-Schutz"], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmL": ["Nein", "50", "100", "150", "200", "300"], "cars": [{"n": "Audi RS Q 8", "gp": 349.23, "v": [0, 24.99, 43.99, 81.49], "j": [0, 25], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 100, 170, 235, 300, 430]}, {"n": "Audi RS 5 ABT", "gp": 249.35, "v": [0, 19.99, 34.99, 64.99], "j": [0, 20], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 90, 150, 210, 270, 390]}, {"n": "Audi RS 3", "gp": 199.82, "v": [0, 19.99, 26.49, 48.99], "j": [0, 20], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 80, 140, 190, 240, 340]}, {"n": "VW Golf 8 R", "gp": 149.15, "v": [0, 14.99, 26.49, 48.99], "j": [0, 15], "zf": [0, 15, 30, 45, 60, 60], "km": [0, 70, 120, 165, 210, 300]}, {"n": "Audi RS 6", "gp": 349.08, "v": [0, 24.99, 43.99, 81.49], "j": [0, 25], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 100, 170, 235, 300, 430]}, {"n": "GLC 63 AMG", "gp": 269.23, "v": [0, 19.99, 34.99, 64.99], "j": [0, 20], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 90, 150, 210, 270, 390]}, {"n": "C 63 AMG", "gp": 289.31, "v": [0, 19.99, 34.99, 64.99], "j": [0, 20], "zf": [0, 20, 40, 60, 80, 80], "km": [0, 90, 150, 210, 270, 390]}]};
+const st={car:0,day:0,dauer:3,vers:0,jf:0,zf:0,km:0,rab:0};
+let textAngefasst=false;
+const EUR=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"});
+function scaler(s,d){const W=D.faktor.reduce((a,b)=>a+b,0);let sum=Math.floor(d/7)*W;for(let k=0;k<d%7;k++)sum+=D.faktor[(s+k)%7];return sum;}
+function calc(car,day,dauer,vers,jf,zf,km,rab){
+  const c=D.cars[car];
+  if(dauer<D.mind[day])return{ok:false,mind:D.mind[day]};
+  const pf=1-D.rabatt[Math.min(dauer,D.days)-1];
+  const gm=c.gp*scaler(day,dauer);
+  const zus=c.v[vers]+c.j[jf]+c.zf[zf]+c.km[km];
+  const total=(1-rab/100)*gm*pf+dauer*zus;
+  return{ok:true,gm:gm,pf:pf,zus:zus,total:total,proTag:total/dauer};
+}
+function nummer(roh){
+  let n=(roh||"").replace(/[^0-9+]/g,"");
+  if(!n)return"";
+  if(n.startsWith("+"))n=n.slice(1);
+  else if(n.startsWith("00"))n=n.slice(2);
+  else if(n.startsWith("0"))n="49"+n.slice(1);
+  return n.length>=8?n:"";
+}
+function angebot(r){
+  const c=D.cars[st.car],name=(kname.value||"").trim();
+  const extras=[];
+  if(c.v[st.vers])extras.push(D.versL[st.vers]);
+  if(c.j[st.jf])extras.push("Jungfahrer-Freigabe");
+  if(c.zf[st.zf])extras.push(D.zfL[st.zf]+" Zusatzfahrer");
+  if(c.km[st.km])extras.push(D.kmL[st.km]+" Extra-Kilometer pro Tag");
+  const z=[];
+  z.push(name?("Hallo "+name+","):"Hallo,");
+  z.push("");
+  z.push("hier Ihr Angebot von Mietix:");
+  z.push("");
+  z.push(c.n);
+  z.push("Start "+D.weekdays[st.day]+", "+st.dauer+(st.dauer===1?" Tag":" Tage"));
+  if(extras.length)z.push("Inklusive "+extras.join(", "));
+  z.push("");
+  z.push("Gesamtpreis: "+EUR.format(r.total));
+  z.push("Das sind "+EUR.format(r.proTag)+" pro Tag.");
+  z.push("");
+  z.push("Melden Sie sich einfach, dann reservieren wir das Fahrzeug für Sie.");
+  z.push("");
+  z.push("Mietix Sportwagenvermietung, Wiesbaden");
+  return z.join("\n");
+}
+window.mxCalc=calc;window.mxNummer=nummer;
+function chips(el,labels,key,small,six){
+  el.innerHTML="";
+  if(six)el.classList.add("six");
+  labels.forEach((l,i)=>{
+    const b=document.createElement("div");
+    b.className="chip"+(small?" small":"");b.textContent=l;
+    b.onclick=()=>{st[key]=i;render();};
+    el.appendChild(b);
+  });
+}
+function mark(el,idx){[...el.children].forEach((c,i)=>c.classList.toggle("on",i===idx));}
+function render(){
+  mark(autos,st.car);mark(tage,st.day);mark(vers,st.vers);mark(jf,st.jf);mark(zf,st.zf);mark(km,st.km);
+  [...schnell.children].forEach(c=>c.classList.toggle("on",+c.dataset.d===st.dauer));
+  if(document.activeElement!==dauerEl)dauerEl.value=st.dauer;
+  const r=calc(st.car,st.day,st.dauer,st.vers,st.jf,st.zf,st.km,st.rab);
+  if(!r.ok){
+    total.textContent="-";protag.textContent="";dauerinfo.textContent="";
+    warn.style.display="block";
+    warn.textContent="Start "+D.weekdays[st.day]+": mindestens "+r.mind+" Tage Mietdauer.";
+    teile.innerHTML="";vorschau.value="";wa.classList.add("aus");wa.href="#";return;
+  }
+  warn.style.display="none";
+  total.textContent=EUR.format(r.total);
+  protag.textContent=EUR.format(r.proTag)+" pro Tag";
+  dauerinfo.textContent=D.cars[st.car].n+", "+D.weekdays[st.day]+", "+st.dauer+(st.dauer===1?" Tag":" Tage");
+  const c=D.cars[st.car],z=[];
+  z.push(["Grundmiete (Tagespreise)",EUR.format(r.gm),""]);
+  if(r.pf<1)z.push(["Mengenrabatt ("+Math.round((1-r.pf)*100)+" %)","-"+EUR.format(r.gm*(1-r.pf)),"minus"]);
+  if(st.rab>0)z.push(["Extra-Rabatt ("+st.rab+" %)","-"+EUR.format(r.gm*r.pf*st.rab/100),"minus"]);
+  if(c.v[st.vers])z.push([D.versL[st.vers],EUR.format(st.dauer*c.v[st.vers]),""]);
+  if(c.j[st.jf])z.push(["Jungfahrer",EUR.format(st.dauer*c.j[st.jf]),""]);
+  if(c.zf[st.zf])z.push([D.zfL[st.zf]+" Zusatzfahrer",EUR.format(st.dauer*c.zf[st.zf]),""]);
+  if(c.km[st.km])z.push([D.kmL[st.km]+" Extra-km pro Tag",EUR.format(st.dauer*c.km[st.km]),""]);
+  z.push(["Gesamt",EUR.format(r.total),""]);
+  teile.innerHTML=z.map(t=>'<div><span>'+t[0]+'</span><span class="'+t[2]+'">'+t[1]+'</span></div>').join("");
+  if(!textAngefasst)vorschau.value=angebot(r);
+  const nr=nummer(knr.value);
+  nrinfo.textContent=nr?("Geht an: +"+nr):(knr.value.trim()?"Nummer noch unvollständig, WhatsApp öffnet die Kontaktauswahl.":"Ohne Nummer öffnet WhatsApp die Kontaktauswahl.");
+  wa.href=(nr?"https://wa.me/"+nr:"https://wa.me/")+"?text="+encodeURIComponent(vorschau.value);
+  wa.classList.remove("aus");
+}
+function setDauer(v){st.dauer=Math.max(1,Math.min(D.qamax,Math.round(v)||1));render();}
+const autos=document.getElementById("autos"),tage=document.getElementById("tage"),
+  vers=document.getElementById("vers"),jf=document.getElementById("jf"),
+  zf=document.getElementById("zf"),km=document.getElementById("km"),
+  schnell=document.getElementById("schnell"),dauerEl=document.getElementById("dauer"),
+  total=document.getElementById("total"),protag=document.getElementById("protag"),
+  dauerinfo=document.getElementById("dauerinfo"),warn=document.getElementById("warn"),
+  teile=document.getElementById("teile"),vorschau=document.getElementById("vorschau"),
+  kname=document.getElementById("kname"),knr=document.getElementById("knr"),
+  nrinfo=document.getElementById("nrinfo"),wa=document.getElementById("wa");
+chips(autos,D.cars.map(c=>c.n),"car");
+chips(tage,D.weekdays.map(w=>w.slice(0,2)),"day",true);
+chips(vers,["Kein","Smart","Komfort","Exklusiv"],"vers",true);
+chips(jf,["Nein","Ja"],"jf",true);
+chips(zf,D.zfL,"zf",true,true);
+chips(km,D.kmL,"km",true,true);
+[2,3,7,14,30].forEach(d=>{
+  const b=document.createElement("div");
+  b.className="chip small";b.textContent=d;b.dataset.d=d;
+  b.onclick=()=>setDauer(d);schnell.appendChild(b);
+});
+document.getElementById("minus").onclick=()=>setDauer(st.dauer-1);
+document.getElementById("plus").onclick=()=>setDauer(st.dauer+1);
+dauerEl.addEventListener("input",()=>{if(dauerEl.value!=="")setDauer(+dauerEl.value);});
+dauerEl.addEventListener("blur",()=>{dauerEl.value=st.dauer;});
+document.getElementById("rab").addEventListener("input",e=>{st.rab=Math.max(0,Math.min(100,+e.target.value||0));render();});
+kname.addEventListener("input",()=>{textAngefasst=false;render();});
+knr.addEventListener("input",render);
+vorschau.addEventListener("input",()=>{textAngefasst=true;render();});
+render();
+</script>
+</body>
+</html>
