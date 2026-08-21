@@ -213,7 +213,7 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
 </div>
 
 <script>
-const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1.0, 1.0, 1.0, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 2, 2, 2], "rabatt": [0.0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmStufen": [50, 100, 150, 200, 300], "freiKm": 150, "cars": [{"n": "Audi RS Q8", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "Audi RS 5 ABT", "gp": 249.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi RS 3 Limousine", "gp": 199.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349]}, {"n": "Golf 8 GTI Clubsport", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309]}, {"n": "Audi RS 6", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439]}, {"n": "GLC 63 S AMG", "gp": 269.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "C 63 S AMG", "gp": 289.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399]}, {"n": "Audi R8 performance", "gp": 399.0, "kaution": 1950, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509]}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199]}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 1000, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129]}]};
+const D={"days": 30, "qamax": 365, "weekdays": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "faktor": [1.0, 1.0, 1.0, 1.175, 1.35, 1.35, 1.35], "mind": [1, 1, 1, 1, 1, 2, 2], "rabatt": [0.0, 0.12, 0.17, 0.18, 0.18, 0.18, 0.2, 0.2, 0.2, 0.22, 0.22, 0.22, 0.22, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25], "zfL": ["Nein", "1", "2", "3", "4", "5"], "kmStufen": [50, 100, 150, 200, 300], "freiKm": 150, "cars": [{"n": "Audi RS Q8", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439], "frSa": 450}, {"n": "Audi RS 5 ABT", "gp": 249.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399], "frSa": 349}, {"n": "Audi RS 3 Limousine", "gp": 199.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 89, 149, 199, 249, 349], "frSa": 249}, {"n": "Golf 8 GTI Clubsport", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 79, 129, 179, 219, 309], "frSa": 199}, {"n": "Audi RS 6", "gp": 349.0, "kaution": 1950, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 109, 189, 259, 319, 439], "frSa": 450}, {"n": "GLC 63 S AMG", "gp": 269.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399], "frSa": 349}, {"n": "C 63 S AMG", "gp": 289.0, "kaution": 1450, "zf": [0, 20, 40, 60, 80, 80], "km": [0, 99, 169, 229, 289, 399], "frSa": 349}, {"n": "Audi R8 performance", "gp": 399.0, "kaution": 1950, "zf": [0, 25, 50, 75, 100, 100], "km": [0, 129, 229, 309, 379, 509], "frSa": 499}, {"n": "Mercedes E 400 d", "gp": 149.0, "kaution": 1000, "zf": [0, 15, 30, 45, 60, 60], "km": [0, 55, 89, 119, 149, 199], "frSa": 199}, {"n": "Golf 8 2.0 Diesel", "gp": 99.0, "kaution": 1000, "zf": [0, 10, 20, 30, 40, 40], "km": [0, 39, 65, 85, 99, 129], "frSa": 129}]};
 const st={car:0,datum:null,bis:null,dauer:3,zf:0,km:0,rab:0};   // dauer folgt aus den beiden Datumsfeldern
 let textAngefasst=false;
 const EUR=new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"});
@@ -250,7 +250,7 @@ function calc(car,day,dauer,zf,kmGesamt,rab){
   const c=D.cars[car];
   if(dauer<D.mind[day])return{ok:false,mind:D.mind[day]};
   const pf=1-D.rabatt[Math.min(dauer,D.days)-1];
-  const gm=c.gp*scaler(day,dauer);
+  const gm=(day===4&&dauer===1)?(c.frSa||c.gp*1.35):c.gp*scaler(day,dauer);
   const kmT=kmPreis(car,(kmGesamt||0)/dauer);   // Preisstaffel gilt je Tag
   const zus=c.zf[zf]+kmT;
   const ges=Math.min(0.9,Math.round((1-pf)*100)/100+(rab||0)/100);
@@ -449,6 +449,52 @@ const merken=()=>{try{localStorage.setItem("mietix",
 ["click","input","change"].forEach(ev=>document.addEventListener(ev,()=>setTimeout(merken,60)));
 $("vorschau").addEventListener("input",()=>{textAngefasst=true;render();});
 render();
+
+function __uebernehmen(p){
+  D.days=p.days; D.qamax=p.qamax; D.weekdays=p.weekdays; D.faktor=p.faktor;
+  D.mind=p.mind; D.rabatt=p.rabatt; D.freiKm=p.freiKm; D.kmStufen=p.kmStufen; D.zfL=p.zfL;
+  D.cars=p.cars.map(function(c){return {n:c.n,gp:c.gp,kaution:c.kaution,zf:c.zf,km:c.km,frSa:c.frSa};});
+}
+
+/* --- Gemeinsame Preisdatei: eine Aenderung wirkt in allen Werkzeugen --- */
+(function(){
+  try{
+    fetch("https://barankohler.github.io/mietix-preise/preise.json",{cache:"no-store"})
+      .then(function(r){return r.ok?r.json():null;})
+      .then(function(p){
+        if(!p||!p.cars||!p.cars.length)return;
+        __uebernehmen(p);
+        var neu=(typeof render==="function")?render:
+                (typeof zeichne==="function")?zeichne:
+                (typeof rechne==="function")?rechne:null;
+        if(neu)neu();
+      }).catch(function(){});
+  }catch(e){}
+})();
+
+/* --- Handynummer des Kunden zwischen den Werkzeugen merken ---
+   Nur zwei Stunden gueltig, damit nie eine alte Nummer aus einem
+   anderen Vorgang vorbelegt wird. */
+(function(){
+  try{
+    var f=document.getElementById("knr")||document.getElementById("nummer")||document.getElementById("tel");
+    if(!f)return;
+    var roh=localStorage.getItem("mietixNummer");
+    if(roh&&!f.value.trim()){
+      var w=JSON.parse(roh);
+      if(w&&w.nr&&(Date.now()-w.zeit)<2*60*60*1000){
+        f.value=w.nr;
+        f.dispatchEvent(new Event("input",{bubbles:true}));
+        f.dispatchEvent(new Event("change",{bubbles:true}));
+      }
+    }
+    f.addEventListener("input",function(){
+      var v=f.value.trim();
+      if(v.replace(/\D/g,"").length>=8)
+        localStorage.setItem("mietixNummer",JSON.stringify({nr:v,zeit:Date.now()}));
+    });
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
