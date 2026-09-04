@@ -259,7 +259,7 @@ function calc(car,day,dauer,zf,kmGesamt,rab){
   const total=nachMenge*(1-extraAnteil);       // Extra-Rabatt auf alles
   const mengeAbzug=gm*(1-pf);
   const extraAbzug=nachMenge*extraAnteil;
-  const ersparnis=mengeAbzug+extraAbzug;
+  const ersparnis=liste-total;   // exakt die Differenz, die der Kunde sieht
   const proz=liste>0?Math.round(ersparnis/liste*100):0;
   return{ok:true,gm:gm,pf:pf,zus:zus,kmT:kmT,
          mengeAbzug:mengeAbzug,extraAbzug:extraAbzug,ersparnis:ersparnis,proz:proz,
