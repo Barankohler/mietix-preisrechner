@@ -253,10 +253,17 @@ function calc(car,day,dauer,zf,kmGesamt,rab){
   const gm=(dauer===1&&day>=4)?(c.frSa||c.gp*1.35):c.gp*scaler(day,dauer);
   const kmT=kmPreis(car,(kmGesamt||0)/dauer);   // Preisstaffel gilt je Tag
   const zus=c.zf[zf]+kmT;
-  const ges=Math.min(0.9,Math.round((1-pf)*100)/100+(rab||0)/100);
-  const total=gm*(1-ges)+dauer*zus;
-  return{ok:true,gm:gm,pf:pf,zus:zus,kmT:kmT,ges:ges,proz:Math.round(ges*100),
-         liste:gm+dauer*zus,total:total,proTag:total/dauer};
+  const extraAnteil=Math.min(90,Math.max(0,rab||0))/100;
+  const liste=gm+dauer*zus;                    // ohne jeden Rabatt
+  const nachMenge=gm*pf+dauer*zus;             // Mengenrabatt nur auf die Grundmiete
+  const total=nachMenge*(1-extraAnteil);       // Extra-Rabatt auf alles
+  const mengeAbzug=gm*(1-pf);
+  const extraAbzug=nachMenge*extraAnteil;
+  const ersparnis=mengeAbzug+extraAbzug;
+  const proz=liste>0?Math.round(ersparnis/liste*100):0;
+  return{ok:true,gm:gm,pf:pf,zus:zus,kmT:kmT,
+         mengeAbzug:mengeAbzug,extraAbzug:extraAbzug,ersparnis:ersparnis,proz:proz,
+         liste:liste,total:total,proTag:total/dauer};
 }
 function nummer(roh){
   let n=(roh||"").replace(/[^0-9+]/g,"");
@@ -281,7 +288,7 @@ function angebot(r){
   if(r.proz>0){
     z.push("*Ihr Rabatt: "+r.proz+" %*");
     z.push("Statt "+EUR.format(r.liste)+" nur "+EUR.format(r.total));
-    z.push("Sie sparen "+EUR.format(r.gm*r.ges));
+    z.push("Sie sparen "+EUR.format(r.ersparnis));
     z.push("");
   }
   z.push("Mietpreis: "+EUR.format(r.total));
@@ -362,18 +369,21 @@ function render(){
   $("warn").style.display="none";
   $("total").textContent=EUR.format(r.total);
   $("unter").textContent=EUR.format(r.proTag)+" pro Tag";
-  const ersparnis=r.gm*r.ges;
+  const ersparnis=r.ersparnis;
   if(ersparnis>=1){$("spar").style.display="block";
     $("spar").textContent="Sie sparen "+EUR0.format(ersparnis)+"  ("+r.proz+" % Rabatt)";}
   else $("spar").style.display="none";
 
   const z=[];
   z.push(["Grundmiete "+st.dauer+(st.dauer===1?" Tag":" Tage"),EUR.format(r.gm),""]);
-  if(r.pf<1)z.push(["Mengenrabatt "+Math.round((1-r.pf)*100)+" %","-"+EUR.format(r.gm*(1-r.pf)),"minus"]);
-  if(st.rab>0)z.push(["Extra-Rabatt "+st.rab+" %","-"+EUR.format(r.gm*st.rab/100),"minus"]);
-  if(st.rab>0&&r.proz>0)z.push(["Gesamtrabatt "+r.proz+" %","-"+EUR.format(r.gm*r.ges),"dick"]);
   if(r.kmT)z.push([st.km.toLocaleString("de-DE")+" km zusätzlich",EUR.format(st.dauer*r.kmT),""]);
   if(c.zf[st.zf])z.push([D.zfL[st.zf]+" Zusatzfahrer",EUR.format(st.dauer*c.zf[st.zf]),""]);
+  if(r.pf<1)z.push(["Mengenrabatt "+Math.round((1-r.pf)*100)+" % auf die Grundmiete",
+                    "-"+EUR.format(r.mengeAbzug),"minus"]);
+  if(st.rab>0)z.push(["Extra-Rabatt "+st.rab+" % auf den Gesamtpreis",
+                      "-"+EUR.format(r.extraAbzug),"minus"]);
+  if(r.proz>0&&(st.rab>0&&r.pf<1))
+    z.push(["Gesamtrabatt "+r.proz+" %","-"+EUR.format(r.ersparnis),"dick"]);
   $("teile").innerHTML=z.map(t=>'<div class="'+(t[2]==="dick"?"dick":"")+'"><span>'+t[0]
     +'</span><span class="'+(t[2]==="minus"?"minus":t[2]==="leise"?"leise":"")+'">'+t[1]+"</span></div>").join("");
 
