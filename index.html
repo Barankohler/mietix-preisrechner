@@ -196,6 +196,8 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
       <div id="nrinfo"></div>
       <button id="senden" type="button" class="knopf gruen">Angebot teilen</button>
       <button id="kopieren" type="button" class="knopf hell">Text kopieren</button>
+      <button id="bildKnopf" type="button" class="knopf hell">Angebot als Bild</button>
+      <img id="bildVorschau" alt="" style="display:none;width:100%;border-radius:16px;margin-top:12px">
     </div>
   </div>
 
@@ -534,6 +536,111 @@ function standAnzeigen(){
   e.textContent=D.stand.split("-").reverse().join(".");
 }
 standAnzeigen();
+
+/* --- Angebot als Bild, gleiche Bildsprache wie die Instagram-Story --- */
+let KORN_P=null;
+function kornP(c){
+  if(KORN_P)return KORN_P;
+  const k=document.createElement("canvas");k.width=k.height=160;
+  const kc=k.getContext("2d"), d=kc.createImageData(160,160);
+  for(let i=0;i<d.data.length;i+=4){
+    const v=200+Math.random()*55;
+    d.data[i]=d.data[i+1]=d.data[i+2]=v; d.data[i+3]=Math.random()*13;
+  }
+  kc.putImageData(d,0,0);
+  KORN_P=c.createPattern(k,"repeat");
+  return KORN_P;
+}
+function angebotsBild(){
+  const r=calc(st.car,mxWtIndex(st.datum),st.dauer,st.zf,st.km,st.rab);
+  if(!r.ok)return null;
+  const c=D.cars[st.car], von=st.datum, bis=st.bis;
+  const B=1080,H=1350;
+  const k=document.createElement("canvas"); k.width=B; k.height=H;
+  const g=k.getContext("2d");
+  const S=(gr,st2)=>{g.font=(st2||800)+" "+gr+"px -apple-system,Helvetica,Arial,sans-serif";};
+  const HELL="#F4F1EC", LEISE="rgba(244,241,236,.45)";
+
+  const grund=g.createLinearGradient(0,0,B*0.35,H);
+  grund.addColorStop(0,"#1C1C20");grund.addColorStop(.55,"#131316");grund.addColorStop(1,"#0A0A0C");
+  g.fillStyle=grund; g.fillRect(0,0,B,H);
+  const licht=g.createRadialGradient(B*0.86,-140,60,B*0.86,-140,980);
+  licht.addColorStop(0,"rgba(255,240,220,.15)");
+  licht.addColorStop(1,"rgba(255,236,212,0)");
+  g.fillStyle=licht; g.fillRect(0,0,B,1000);
+  g.fillStyle=kornP(g); g.fillRect(0,0,B,H);
+
+  g.textAlign="center";
+  S(30,700); g.letterSpacing="10px"; g.fillStyle=LEISE;
+  g.fillText("MIETIX SPORTWAGENVERMIETUNG",B/2+5,120);
+  g.letterSpacing="0px";
+
+  g.font="300 74px -apple-system,Helvetica,Arial,sans-serif";
+  g.letterSpacing="4px"; g.fillStyle=HELL;
+  g.fillText(c.n.toUpperCase(),B/2+2,226);
+  g.letterSpacing="0px";
+  g.fillStyle="rgba(196,22,28,.85)"; g.fillRect(B/2-52,264,104,3);
+
+  S(34,500); g.letterSpacing="4px"; g.fillStyle=LEISE;
+  const zt=(wtKurz(von)+" "+kurz(von)+"   bis   "+wtKurz(bis)+" "+lang(bis)).toUpperCase();
+  g.fillText(zt,B/2+2,340);
+  g.fillText(st.dauer+(st.dauer===1?" TAG":" TAGE"),B/2+2,392);
+  g.letterSpacing="0px";
+
+  let y=520;
+  if(r.proz>0){
+    S(46,700); g.letterSpacing="6px"; g.fillStyle="#C4161C";
+    g.fillText(r.proz+" % RABATT",B/2+3,y);
+    g.letterSpacing="0px";
+    S(40,600); g.fillStyle=LEISE;
+    const alt="statt "+EUR0.format(r.liste);
+    g.fillText(alt,B/2,y+72);
+    const aw=g.measureText(alt).width, zb=g.measureText("statt ").width;
+    g.strokeStyle=LEISE; g.lineWidth=3;
+    g.beginPath(); g.moveTo(B/2-aw/2+zb-2,y+58); g.lineTo(B/2+aw/2+2,y+58); g.stroke();
+    y+=140;
+  } else { y+=40; }
+
+  S(140,800); g.fillStyle=HELL;
+  g.fillText(EUR0.format(r.total),B/2,y+90);
+  S(34,500); g.fillStyle=LEISE;
+  g.fillText("für den kompletten Zeitraum",B/2,y+146);
+  y+=230;
+
+  const kmGesamt=D.freiKm*st.dauer+st.km;
+  const zeilen=[["Kilometer", kmGesamt.toLocaleString("de-DE")+" km inklusive"],
+                ["Zusatzfahrer", c.zf[st.zf] ? D.zfL[st.zf] : "keine"],
+                ["Kaution", c.kaution?EUR0.format(c.kaution)+", kommt zurück":"auf Anfrage"]];
+  g.textAlign="left";
+  zeilen.forEach(([a,b])=>{
+    g.fillStyle="rgba(244,241,236,.14)"; g.fillRect(96,y-34,B-192,1);
+    S(30,600); g.fillStyle=LEISE; g.fillText(a.toUpperCase(),96,y+10);
+    g.textAlign="right"; S(34,700); g.fillStyle=HELL; g.fillText(b,B-96,y+10);
+    g.textAlign="left"; y+=76;
+  });
+
+  g.textAlign="center";
+  S(30,500); g.fillStyle=LEISE;
+  g.fillText(st.dauer>1 ? "Preis gilt nur für den kompletten Zeitraum am Stück"
+                        : "Preis gilt für den genannten Tag", B/2, H-92);
+  return k;
+}
+let BILD=null;
+$("bildKnopf").addEventListener("click",async()=>{
+  BILD=angebotsBild();
+  if(!BILD){ rueckmeldung($("bildKnopf"),"Zeitraum prüfen"); return; }
+  $("bildVorschau").src=BILD.toDataURL("image/jpeg",0.92);
+  $("bildVorschau").style.display="block";
+  const name="Mietix_Angebot_"+D.cars[st.car].n.replace(/[^A-Za-z0-9]+/g,"_")+".jpg";
+  BILD.toBlob(async b=>{
+    const datei=new File([b],name,{type:"image/jpeg"});
+    if(navigator.canShare && navigator.canShare({files:[datei]})){
+      try{ await navigator.share({files:[datei]}); return; }catch(e){}
+    }
+    const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  },"image/jpeg",0.92);
+});
 </script>
 </body>
 </html>
