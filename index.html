@@ -444,7 +444,8 @@ $("bis").addEventListener("change",e=>{
 $("autoknopf").onclick=aufSheet;
 $("zu").onclick=zuSheet;
 $("sheetbg").onclick=e=>{if(e.target.id==="sheetbg")zuSheet();};
-$("rab").addEventListener("input",e=>{st.rab=Math.max(0,Math.min(100,+e.target.value||0));textAngefasst=false;render();});
+$("rab").addEventListener("input",e=>{st.rab=Math.max(0,Math.min(90,+e.target.value||0));textAngefasst=false;render();});
+$("rab").addEventListener("blur",()=>{$("rab").value=st.rab;render();});
 $("knr").addEventListener("input",render);
 
 function rueckmeldung(knopf,text){
