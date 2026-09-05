@@ -235,6 +235,24 @@ function tageZwischen(von,bis){return Math.round((bis-von)/86400000);}
 function scaler(s,d){const W=D.faktor.reduce((a,b)=>a+b,0);let sum=Math.floor(d/7)*W;
   for(let k=0;k<d%7;k++)sum+=D.faktor[(s+k)%7];return sum;}
 
+/* Preisregel wie in der Excel:
+   Ein Wochenendtag (Fr, Sa, So) kostet den festen Wochenendpreis des Fahrzeugs.
+   Kein Wochentagsfaktor, kein Mengenrabatt.
+   Werktage laufen ueber den Faktor, der Mengenrabatt gilt nur auf diesen Teil. */
+function teile(a,start,dauer){
+  let we=0, wt=0;
+  for(let k=0;k<dauer;k++){
+    const t=(start+k)%7;
+    if(t>=4) we += (a.frSa || a.gp*D.faktor[t]);
+    else     wt += a.gp*D.faktor[t];
+  }
+  return {we:we, wt:wt, liste:we+wt};
+}
+function wochenmiete(a,start,dauer){
+  const p=teile(a,start,dauer);
+  return p.we + p.wt*(1-D.rabatt[Math.min(dauer,D.days)-1]);
+}
+
 /* Wochenendpreis ist die Obergrenze: faellt ein Miettag auf Fr, Sa oder So,
    kostet dieser Tag hoechstens den Wochenendpreis des Fahrzeugs. Die
    Ein-Tages-Miete am Wochenende behaelt ihren eigenen Sonderpreis. */
@@ -265,14 +283,15 @@ function calc(car,day,dauer,zf,kmGesamt,rab){
   const c=D.cars[car];
   if(dauer<D.mind[day])return{ok:false,mind:D.mind[day]};
   const pf=1-D.rabatt[Math.min(dauer,D.days)-1];
-  const gm=wochenmiete(c,day,dauer);
+  const tl=teile(c,day,dauer);
+  const gm=tl.liste;
   const kmT=kmPreis(car,(kmGesamt||0)/dauer);   // Preisstaffel gilt je Tag
   const zus=c.zf[zf]+kmT;
   const extraAnteil=Math.min(90,Math.max(0,rab||0))/100;
   const liste=gm+dauer*zus;                    // ohne jeden Rabatt
-  const nachMenge=gm*pf+dauer*zus;             // Mengenrabatt nur auf die Grundmiete
+  const nachMenge=tl.we+tl.wt*pf+dauer*zus;    // Mengenrabatt nur auf die Werktage
   const total=nachMenge*(1-extraAnteil);       // Extra-Rabatt auf alles
-  const mengeAbzug=gm*(1-pf);
+  const mengeAbzug=tl.wt*(1-pf);
   const extraAbzug=nachMenge*extraAnteil;
   const ersparnis=liste-total;   // exakt die Differenz, die der Kunde sieht
   const proz=liste>0?Math.round(ersparnis/liste*100):0;
