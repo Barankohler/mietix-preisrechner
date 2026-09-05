@@ -291,10 +291,16 @@ function angebot(r){
   const c=D.cars[st.car],von=st.datum,bis=st.bis;
   const kmGesamt = D.freiKm*st.dauer + st.km;
   const zfTxt = c.zf[st.zf] ? D.zfL[st.zf] : "keine";
+  const zeitraum = wtKurz(von)+" "+kurz(von)+" bis "+wtKurz(bis)+" "+lang(bis)
+                 +", "+st.dauer+(st.dauer===1?" Tag":" Tage");
   const z=[];
-  z.push("Fahrzeug: "+c.n);
-  z.push("Zeitraum: "+wtKurz(von)+" "+kurz(von)+" bis "+wtKurz(bis)+" "+lang(bis)
-         +", "+st.dauer+(st.dauer===1?" Tag":" Tage"));
+  z.push("*Ihr Angebot*");
+  z.push("");
+  z.push("- Fahrzeug: "+c.n);
+  z.push("- Zeitraum: "+zeitraum);
+  z.push("- Kilometer: "+kmGesamt.toLocaleString("de-DE")+" km inklusive");
+  z.push("- Zusatzfahrer: "+zfTxt);
+  z.push("- Kaution: "+(c.kaution?EUR0.format(c.kaution)+", kommt nach Rückgabe komplett zurück":"auf Anfrage"));
   z.push("");
   if(r.proz>0){
     z.push("*Ihr Rabatt: "+r.proz+" %*");
@@ -302,17 +308,12 @@ function angebot(r){
     z.push("Sie sparen "+EUR.format(r.ersparnis));
     z.push("");
   }
-  z.push("Mietpreis: "+EUR.format(r.total));
+  z.push("*Mietpreis: "+EUR.format(r.total)+"*");
   if(st.dauer>1){
     z.push("");
-    z.push("Dieser Preis gilt nur für den kompletten Zeitraum "
-      +wtKurz(von)+" "+kurz(von)+" bis "+wtKurz(bis)+" "+lang(bis)
+    z.push("Gilt nur für den kompletten Zeitraum "+zeitraum
       +" am Stück. Für einzelne Tage daraus gilt der reguläre Tagespreis.");
   }
-  z.push("");
-  z.push("Kilometer: "+kmGesamt.toLocaleString("de-DE")+" km");
-  z.push("Zusatzfahrer: "+zfTxt);
-  z.push("Kaution: "+(c.kaution?EUR0.format(c.kaution)+", kommt nach Rückgabe komplett zurück":"auf Anfrage"));
   z.push("");
   z.push("Soll ich den Wagen für Sie reservieren?");
   return z.join("\n");
