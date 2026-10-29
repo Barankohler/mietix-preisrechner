@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Mietix Preisrechner</title>
 <style>
-input,select,textarea{font-size:16px;font-family:inherit}
+input,select,textarea{font-size:16px;font-family:inherit;max-width:100%;box-sizing:border-box}input[type=date],input[type=time],input[type=datetime-local]{-webkit-appearance:none;appearance:none;min-width:0;max-width:100%;min-height:44px}select{min-width:0}
 
 :root{--red:#C4161C;--dark:#2E2E30;--grey:#6F6F72;--line:#E2E2E4;--bg:#F2F2F4;--wa:#25D366;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -194,7 +194,7 @@ footer{margin:22px 18px 0;font-size:11px;color:var(--grey);line-height:1.7;}
     <p class="feldname">Angebot senden</p>
     <div class="karte">
       <textarea id="vorschau" rows="10"></textarea>
-      <input id="knr" type="tel" inputmode="tel" autocomplete="off" placeholder="Handynummer des Kunden (optional)">
+      <input id="knr" type="tel" inputmode="tel" autocomplete="off" placeholder="Handynummer (optional)">
       <div id="nrinfo"></div>
       <button id="senden" type="button" class="knopf gruen">Angebot teilen</button>
       <button id="kopieren" type="button" class="knopf hell">Text kopieren</button>
